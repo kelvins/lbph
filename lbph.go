@@ -4,28 +4,58 @@ package lbph
 import (
 	"errors"
 	"image"
-  "fmt"
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
+	"math"
 	"strconv"
-
-	"github.com/kelvins/imgproc"
 )
 
-var imgs []image.Image
-var lbls []string
+// Store the input data (images and labels) and the calculated histogram
+type Data struct {
+	images     []image.Image
+	labels     []string
+	histograms [][256]int64
+}
 
-var histograms [][256]int64
+var data Data
 
+// getImageSize is responsible for get the width and height from the image
+func getImageSize(img image.Image) (int, int) {
+	bounds := img.Bounds()
+	return bounds.Max.X, bounds.Max.Y
+}
+
+// isGrayscale function is responsible for check if an image is in grayscale.
+func isGrayscale(img image.Image) bool {
+	// Gets the width and height of the image
+	w, h := getImageSize(img)
+
+	if w == 0 || h == 0 {
+		return false
+	}
+
+	// Verifies each pixel (R,G,B)
+	for x := 0; x < w; x++ {
+		for y := 0; y < h; y++ {
+			r, g, b, _ := img.At(x, y).RGBA()
+			if r != g && g != b {
+				return false
+			}
+		}
+	}
+
+	return true
+}
+
+// checkInputData function is responsible for check if all images are in
+// grayscale and have the same size (width and height)
 func checkInputData(images []image.Image) error {
-	// Get the image bounds
-	bounds := images[0].Bounds()
-	width, height := bounds.Max.X, bounds.Max.Y
+	width, height := getImageSize(images[0])
 
 	for index := 0; index < len(images); index++ {
 		// Check if the image is in grayscale
-		if !imgproc.IsGrayscale(images[index]) {
+		if !isGrayscale(images[index]) {
 			return errors.New("One or more images are not in grayscale")
 		}
 
@@ -39,6 +69,8 @@ func checkInputData(images []image.Image) error {
 	return nil
 }
 
+// getBinary function return 1 (string) if the value is equal or higher than the
+// threshold or 0 (string) otherwise
 func getBinary(value, threshold uint8) string {
 	if value >= threshold {
 		return "1"
@@ -47,29 +79,28 @@ func getBinary(value, threshold uint8) string {
 	}
 }
 
+// Return a 'matrix' containing all pixels from the image passed by parameter
 func getPixels(img image.Image) [][]uint8 {
-	bounds := img.Bounds()
-	w, h := bounds.Max.X, bounds.Max.Y
+	w, h := getImageSize(img)
 
 	var pixels [][]uint8
 	for row := 0; row < w; row++ {
-	   var r []uint8
+		var r []uint8
 		for col := 0; col < h; col++ {
-      red, _, _, _ := img.At(row, col).RGBA()
+			red, _, _, _ := img.At(row, col).RGBA()
 			r = append(r, uint8(red))
-			//r = append(r, newImage.GrayAt(row, col).Y)
 		}
 		pixels = append(pixels, r)
 	}
 	return pixels
 }
 
-func getHistogram(img image.Image) ([256]int64, error) {
+// applyLBP applies the LBP operation using radius equal to 1
+func applyLBP(img image.Image) ([]int64, error) {
 	pixels := getPixels(img)
-	bounds := img.Bounds()
-	w, h := bounds.Max.X, bounds.Max.Y
+	w, h := getImageSize(img)
 
-	var histogram [256]int64
+	var result []int64
 	// Convert each pixel to grayscale
 	for row := 1; row < w-1; row++ {
 		for col := 1; col < h-1; col++ {
@@ -87,13 +118,36 @@ func getHistogram(img image.Image) ([256]int64, error) {
 
 			i, err := strconv.ParseInt(binaryResult, 2, 32)
 			if err != nil {
-				return histogram, errors.New("Error normalizing the images")
+				return result, errors.New("Error normalizing the images")
 			} else {
-				histogram[i] += 1
+				result = append(result, i)
 			}
 		}
 	}
+	return result, nil
+}
+
+// getHistogram generates a histogram based on the LBP result
+func getHistogram(img image.Image) ([256]int64, error) {
+	var histogram [256]int64
+	lbp, err := applyLBP(img)
+	if err != nil {
+		return histogram, errors.New("Error in the LBP operation")
+	}
+	for index := 0; index < len(lbp); index++ {
+		histogram[lbp[index]] += 1
+	}
 	return histogram, nil
+}
+
+// getHistogramDist calculates the distance between two histograms using euclidean distance
+// sum = sqrt((h1(i)-h2(i))^2)
+func getHistogramDist(hist1, hist2 [256]int64) float64 {
+	var sum float64
+	for index := 0; index < len(hist1); index++ {
+		sum += float64((hist1[index] - hist2[index]) * (hist1[index] - hist2[index]))
+	}
+	return math.Sqrt(sum)
 }
 
 // Function used to train the algorithm
@@ -112,6 +166,7 @@ func Train(images []image.Image, labels []string) error {
 		return err
 	}
 
+	var histograms [][256]int64
 	for index := 0; index < len(images); index++ {
 		hist, err := getHistogram(images[index])
 		if err != nil {
@@ -124,25 +179,14 @@ func Train(images []image.Image, labels []string) error {
 	if len(histograms) == 0 {
 		return errors.New("None histogram was calculated")
 	}
-	imgs = images
-	lbls = labels
+
+	data = Data{
+		images:     images,
+		labels:     labels,
+		histograms: histograms,
+	}
+
 	return nil
-}
-
-func sqrt(x float64) float64 {
-	z := 1.0
-	for i := 0; i < 1000; i++ {
-		z -= (z*z - x) / (2 * z)
-	}
-	return z
-}
-
-func getHistogramDist(hist1, hist2 [256]int64) float64 {
-	var sum float64
-	for index := 0; index < len(hist1); index++ {
-		sum += float64((hist1[index] - hist2[index]) * (hist1[index] - hist2[index]))
-	}
-	return sqrt(sum)
 }
 
 func Predict(img image.Image) (string, float64, error) {
@@ -152,17 +196,17 @@ func Predict(img image.Image) (string, float64, error) {
 	}
 	var min float64
 	var i int
-	for index := 0; index < len(histograms); index++ {
+	for index := 0; index < len(data.histograms); index++ {
 		if index == 0 {
 			i = index
-			min = getHistogramDist(hist, histograms[index])
+			min = getHistogramDist(hist, data.histograms[index])
 		} else {
-			x := getHistogramDist(hist, histograms[index])
+			x := getHistogramDist(hist, data.histograms[index])
 			if x < min {
 				min = x
 				i = index
 			}
 		}
 	}
-	return lbls[i], min, nil
+	return data.labels[i], min, nil
 }
