@@ -3,8 +3,8 @@ package lbph
 
 import (
 	"errors"
-	"fmt"
 	"image"
+  "fmt"
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
@@ -16,7 +16,7 @@ import (
 var imgs []image.Image
 var lbls []string
 
-var histograms [][256]int16
+var histograms [][256]int64
 
 func checkInputData(images []image.Image) error {
 	// Get the image bounds
@@ -50,32 +50,26 @@ func getBinary(value, threshold uint8) string {
 func getPixels(img image.Image) [][]uint8 {
 	bounds := img.Bounds()
 	w, h := bounds.Max.X, bounds.Max.Y
-	newImage := image.NewGray(bounds)
-
-	// Convert each pixel to grayscale
-	for x := 0; x < w; x++ {
-		for y := 0; y < h; y++ {
-			newImage.Set(x, y, img.At(x, y))
-		}
-	}
 
 	var pixels [][]uint8
-	var r []uint8
 	for row := 0; row < w; row++ {
+	   var r []uint8
 		for col := 0; col < h; col++ {
-			r = append(r, newImage.GrayAt(row, col).Y)
+      red, _, _, _ := img.At(row, col).RGBA()
+			r = append(r, uint8(red))
+			//r = append(r, newImage.GrayAt(row, col).Y)
 		}
 		pixels = append(pixels, r)
 	}
 	return pixels
 }
 
-func getHistogram(img image.Image) ([256]int16, error) {
+func getHistogram(img image.Image) ([256]int64, error) {
 	pixels := getPixels(img)
 	bounds := img.Bounds()
 	w, h := bounds.Max.X, bounds.Max.Y
 
-	var histogram [256]int16
+	var histogram [256]int64
 	// Convert each pixel to grayscale
 	for row := 1; row < w-1; row++ {
 		for col := 1; col < h-1; col++ {
@@ -91,11 +85,10 @@ func getHistogram(img image.Image) ([256]int16, error) {
 				}
 			}
 
-			i, err := strconv.ParseInt(binaryResult, 10, 32)
+			i, err := strconv.ParseInt(binaryResult, 2, 32)
 			if err != nil {
 				return histogram, errors.New("Error normalizing the images")
 			} else {
-				fmt.Println(i)
 				histogram[i] += 1
 			}
 		}
@@ -144,7 +137,7 @@ func sqrt(x float64) float64 {
 	return z
 }
 
-func getHistogramDist(hist1, hist2 [256]int16) float64 {
+func getHistogramDist(hist1, hist2 [256]int64) float64 {
 	var sum float64
 	for index := 0; index < len(hist1); index++ {
 		sum += float64((hist1[index] - hist2[index]) * (hist1[index] - hist2[index]))
