@@ -27,6 +27,39 @@ func loadImage(filePath string) (image.Image, error) {
 	return img, nil
 }
 
+func TestGetSize(t *testing.T) {
+	// Table tests
+	var tTable = []struct {
+		path   string
+		width  int
+		height int
+	}{
+		{"./test/1.png", 200, 200},
+		{"./test/2.png", 6, 6},
+		{"./test/3.png", 256, 256},
+	}
+
+	// Test with all values in the table
+	for _, pair := range tTable {
+		// Image is not in grayscale
+		img, _ := loadImage(pair.path)
+		width, height := getSize(img)
+		if width != pair.width {
+			t.Error(
+				"Expected: ", pair.width,
+				"Received: ", width,
+			)
+		}
+		if height != pair.height {
+			t.Error(
+				"Expected: ", pair.height,
+				"Received: ", height,
+			)
+		}
+	}
+
+}
+
 func TestCheckInputData(t *testing.T) {
 	// Image is not in grayscale
 	var images []image.Image
@@ -108,9 +141,9 @@ func TestPredict(t *testing.T) {
 		t.Error(err)
 	}
 	if lbl != "3" {
-		t.Error("Expected label == 3 - Received",lbl)
+		t.Error("Expected label == 3 - Received", lbl)
 	}
 	if dist > 500 || dist < 0 {
-		t.Error("Received dist : ",dist)
+		t.Error("Received dist : ", dist)
 	}
 }

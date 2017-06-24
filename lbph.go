@@ -20,8 +20,8 @@ type Data struct {
 
 var data Data
 
-// getImageSize is responsible for get the width and height from the image
-func getImageSize(img image.Image) (int, int) {
+// getSize is responsible for get the width and height from the image
+func getSize(img image.Image) (int, int) {
 	bounds := img.Bounds()
 	return bounds.Max.X, bounds.Max.Y
 }
@@ -29,7 +29,7 @@ func getImageSize(img image.Image) (int, int) {
 // isGrayscale function is responsible for check if an image is in grayscale.
 func isGrayscale(img image.Image) bool {
 	// Gets the width and height of the image
-	w, h := getImageSize(img)
+	w, h := getSize(img)
 
 	if w == 0 || h == 0 {
 		return false
@@ -51,7 +51,7 @@ func isGrayscale(img image.Image) bool {
 // checkInputData function is responsible for check if all images are in
 // grayscale and have the same size (width and height)
 func checkInputData(images []image.Image) error {
-	width, height := getImageSize(images[0])
+	width, height := getSize(images[0])
 
 	for index := 0; index < len(images); index++ {
 		// Check if the image is in grayscale
@@ -81,7 +81,7 @@ func getBinary(value, threshold uint8) string {
 
 // Return a 'matrix' containing all pixels from the image passed by parameter
 func getPixels(img image.Image) [][]uint8 {
-	w, h := getImageSize(img)
+	w, h := getSize(img)
 
 	var pixels [][]uint8
 	for row := 0; row < w; row++ {
@@ -98,7 +98,7 @@ func getPixels(img image.Image) [][]uint8 {
 // applyLBP applies the LBP operation using radius equal to 1
 func applyLBP(img image.Image) ([]int64, error) {
 	pixels := getPixels(img)
-	w, h := getImageSize(img)
+	w, h := getSize(img)
 
 	var result []int64
 	// Convert each pixel to grayscale
