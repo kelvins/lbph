@@ -57,7 +57,31 @@ func TestGetSize(t *testing.T) {
 			)
 		}
 	}
+}
 
+func TestIsGrayscale(t *testing.T) {
+	// Table tests
+	var tTable = []struct {
+		path string
+		res  bool
+	}{
+		{"./test/1.png", true},
+		{"./test/2.png", true},
+		{"./test/3.png", false},
+	}
+
+	// Test with all values in the table
+	for _, pair := range tTable {
+		// Image is not in grayscale
+		img, _ := loadImage(pair.path)
+		res := isGrayscale(img)
+		if res != pair.res {
+			t.Error(
+				"Expected: ", pair.res,
+				"Received: ", res,
+			)
+		}
+	}
 }
 
 func TestCheckInputData(t *testing.T) {
