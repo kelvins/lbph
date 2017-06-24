@@ -41,7 +41,6 @@ func TestGetSize(t *testing.T) {
 
 	// Test with all values in the table
 	for _, pair := range tTable {
-		// Image is not in grayscale
 		img, _ := loadImage(pair.path)
 		width, height := getSize(img)
 		if width != pair.width {
@@ -72,7 +71,6 @@ func TestIsGrayscale(t *testing.T) {
 
 	// Test with all values in the table
 	for _, pair := range tTable {
-		// Image is not in grayscale
 		img, _ := loadImage(pair.path)
 		res := isGrayscale(img)
 		if res != pair.res {
@@ -125,6 +123,30 @@ func TestCheckInputData(t *testing.T) {
 	err = checkInputData(images)
 	if err != nil {
 		t.Error("Expected: nil. Received: ", err)
+	}
+}
+
+func TestGetBinary(t *testing.T) {
+	// Table tests
+	var tTable = []struct {
+		value     uint8
+		threshold uint8
+		result    string
+	}{
+		{120, 120, "1"},
+		{214, 190, "1"},
+		{150, 240, "0"},
+	}
+
+	// Test with all values in the table
+	for _, pair := range tTable {
+		result := getBinary(pair.value, pair.threshold)
+		if result != pair.result {
+			t.Error(
+				"Expected: ", pair.result,
+				"Received: ", result,
+			)
+		}
 	}
 }
 
