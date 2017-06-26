@@ -53,6 +53,10 @@ func CheckInputData(images []image.Image) error {
 	}
 	width, height := GetSize(images[0])
 
+	if width <= 0 && height <= 0 {
+		return errors.New("Invalid image sizes")
+	}
+
 	for index := 0; index < len(images); index++ {
 		if images[index] == nil {
 			return errors.New("One or more images are nil")
