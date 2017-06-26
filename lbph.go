@@ -9,16 +9,11 @@ import (
 	_ "image/png"
 	"math"
 	"strconv"
+
+  "github.com/kelvins/lbph/structs"
 )
 
-// Store the input data (images and labels) and the calculated histogram
-type Data struct {
-	images     []image.Image
-	labels     []string
-	histograms [][256]int64
-}
-
-var data Data
+var Data structs.Data
 
 // getSize is responsible for get the width and height from the image
 func getSize(img image.Image) (int, int) {
@@ -180,10 +175,10 @@ func Train(images []image.Image, labels []string) error {
 		return errors.New("None histogram was calculated")
 	}
 
-	data = Data{
-		images:     images,
-		labels:     labels,
-		histograms: histograms,
+	Data = structs.Data{
+	  Images:     images,
+		Labels:     labels,
+		Histograms: histograms,
 	}
 
 	return nil
@@ -196,17 +191,17 @@ func Predict(img image.Image) (string, float64, error) {
 	}
 	var min float64
 	var i int
-	for index := 0; index < len(data.histograms); index++ {
+	for index := 0; index < len(Data.Histograms); index++ {
 		if index == 0 {
 			i = index
-			min = getHistogramDist(hist, data.histograms[index])
+			min = getHistogramDist(hist, Data.Histograms[index])
 		} else {
-			x := getHistogramDist(hist, data.histograms[index])
+			x := getHistogramDist(hist, Data.Histograms[index])
 			if x < min {
 				min = x
 				i = index
 			}
 		}
 	}
-	return data.labels[i], min, nil
+	return Data.Labels[i], min, nil
 }
