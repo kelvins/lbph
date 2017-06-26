@@ -8,6 +8,18 @@ You can use go get:
 go get github.com/kelvins/lbph
 ```
 
+## Step-by-Step
+
+...
+
+## Important Notes
+
+- The histograms comparison function is using euclidean distance as follows:
+
+$D_{L2} = \sqrt{\sum_{i}\left( h_1(i) - h_2(i) \right) ^2 }$
+
+- It is currently using a fixed radius of 1.
+
 ## Usage
 
 ...
@@ -20,13 +32,16 @@ You can access the full documentation here: [![GoDoc](https://godoc.org/github.c
 
 This project was created under the **MIT license**. You can read the license here: [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](LICENSE)
 
+## How to contribute
+
 Feel free to contribute by commenting, suggesting, creating issues or sending pull requests. Any help is welcome.
 
-## Contributing
+### Contributing
 
 1. Create an issue (optional)
-2. Fork the repo
-3. Make your changes
-4. Commit your changes (`git commit -am 'Some cool feature'`)
-5. Push to the branch (`git push origin master`)
-6. Create a new Pull Request
+2. Fork the repo to your Github account
+3. Clone the project to your local machine
+4. Make your changes
+5. Commit your changes (`git commit -am 'Some cool feature'`)
+6. Push to the branch (`git push origin master`)
+7. Create a new Pull Request
