@@ -17,7 +17,8 @@ var Data structs.Data
 
 // Function used to train the algorithm
 func Train(images []image.Image, labels []string) error {
-
+  Data = structs.Data{}
+  
 	if len(images) != len(labels) {
 		return errors.New("Slices have different sizes")
 	}
