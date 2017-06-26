@@ -1,4 +1,4 @@
-// Performs face recognition using lbph
+// lbph package provides a texture classification using local binary patterns
 package lbph
 
 import (
@@ -13,25 +13,35 @@ import (
 	"github.com/kelvins/lbph/structs"
 )
 
+// Struct that stores the Data loaded by the user
 var Data structs.Data
 
-// Function used to train the algorithm
+// Train function is used to train the LBPH algorithm
 func Train(images []image.Image, labels []string) error {
-  Data = structs.Data{}
-  
+	// Clear the data structure
+	Data = structs.Data{}
+
+	// Check if the images and labels slices have the same size
 	if len(images) != len(labels) {
 		return errors.New("Slices have different sizes")
 	}
+
+	// Check if the images slice is not empty
+	// As we already checked if the slices have the same size we
+	// don't need to check if the labels slice is empty
 	if len(images) == 0 {
 		return errors.New("Empty vector")
 	}
 
-	// Check if the input data is in the correct format
+	// Call the CheckInputData from the common package
+	// It will check if all images are in grayscale and have the same size
 	err := common.CheckInputData(images)
 	if err != nil {
 		return err
 	}
 
+	// Call the GetHistogram from the histogram package
+	// It will run the LBP operation and generate the histogram for each image
 	var histograms [][256]int64
 	for index := 0; index < len(images); index++ {
 		hist, err := histogram.GetHistogram(images[index])
@@ -41,38 +51,50 @@ func Train(images []image.Image, labels []string) error {
 		histograms = append(histograms, hist)
 	}
 
-	// This conditional must never occurs
-	if len(histograms) == 0 {
-		return errors.New("None histogram was calculated")
-	}
-
+	// Store the current data that we are working on
 	Data = structs.Data{
 		Images:     images,
 		Labels:     labels,
 		Histograms: histograms,
 	}
 
+	// Everything is ok, return nil
 	return nil
 }
 
+// Predict function is finds the closest image/group based on the images used in the Train function
 func Predict(img image.Image) (string, float64, error) {
+	// Check if the image passed by parameter is nil
+	if img == nil {
+		return "", 0.0, errors.New("Image is nil")
+	}
+
+	// If we don't have histograms to compare, probably the Train function was
+	// not called or has occurred an error and it was not correctly treated
+	if len(Data.Histograms) == 0 {
+		return "", 0.0, errors.New("Could not get the image histogram")
+	}
+
+	// Calculate the histogram for the current image
 	hist, err := histogram.GetHistogram(img)
 	if err != nil {
 		return "", 0.0, errors.New("Could not get the image histogram")
 	}
-	var min float64
-	var i int
-	for index := 0; index < len(Data.Histograms); index++ {
-		if index == 0 {
-			i = index
-			min = histogram.GetHistogramDist(hist, Data.Histograms[index])
-		} else {
-			x := histogram.GetHistogramDist(hist, Data.Histograms[index])
-			if x < min {
-				min = x
-				i = index
-			}
+
+	// Search for the closest histogram based on the histograms calculated in the Train function
+	minValue := histogram.GetHistogramDist(hist, Data.Histograms[0])
+	minIndex := 0
+	for index := 1; index < len(Data.Histograms); index++ {
+		// Calculate the distance from the current histogram
+		dist := histogram.GetHistogramDist(hist, Data.Histograms[index])
+		// If it is closer, save the minValue and the index
+		if dist < minValue {
+			minValue = dist
+			minIndex = index
 		}
 	}
-	return Data.Labels[i], min, nil
+
+	// Return the label corresponding to the closest histogram,
+	// the distance (minValue) and the error (nil)
+	return Data.Labels[minIndex], minValue, nil
 }
