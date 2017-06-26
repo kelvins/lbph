@@ -1,6 +1,8 @@
 package common
 
 import (
+	"image"
+	"os"
 	"testing"
 )
 
@@ -32,15 +34,15 @@ func TestGetSize(t *testing.T) {
 		width  int
 		height int
 	}{
-		{"./test/1.png", 200, 200},
-		{"./test/2.png", 6, 6},
-		{"./test/3.png", 256, 256},
+		{"../test/1.png", 200, 200},
+		{"../test/2.png", 6, 6},
+		{"../test/3.png", 256, 256},
 	}
 
 	// Test with all values in the table
 	for _, pair := range tTable {
 		img, _ := loadImage(pair.path)
-		width, height := getSize(img)
+		width, height := GetSize(img)
 		if width != pair.width {
 			t.Error(
 				"Expected: ", pair.width,
@@ -62,15 +64,15 @@ func TestIsGrayscale(t *testing.T) {
 		path string
 		res  bool
 	}{
-		{"./test/1.png", true},
-		{"./test/2.png", true},
-		{"./test/3.png", false},
+		{"../test/1.png", true},
+		{"../test/2.png", true},
+		{"../test/3.png", false},
 	}
 
 	// Test with all values in the table
 	for _, pair := range tTable {
 		img, _ := loadImage(pair.path)
-		res := isGrayscale(img)
+		res := IsGrayscale(img)
 		if res != pair.res {
 			t.Error(
 				"Expected: ", pair.res,
@@ -83,12 +85,12 @@ func TestIsGrayscale(t *testing.T) {
 func TestCheckInputData(t *testing.T) {
 	// Image is not in grayscale
 	var images []image.Image
-	img, err := loadImage("./test/3.png")
+	img, err := loadImage("../test/3.png")
 	if err != nil {
 		t.Error(err)
 	}
 	images = append(images, img)
-	err = checkInputData(images)
+	err = CheckInputData(images)
 	if err == nil {
 		t.Error("Expected: Image is not in grayscale. Received: nil")
 	}
@@ -96,8 +98,8 @@ func TestCheckInputData(t *testing.T) {
 
 	// Images have different sizes
 	var paths []string
-	paths = append(paths, "./test/1.png")
-	paths = append(paths, "./test/2.png")
+	paths = append(paths, "../test/1.png")
+	paths = append(paths, "../test/2.png")
 
 	for index := 0; index < len(paths); index++ {
 		img, err := loadImage(paths[index])
@@ -106,19 +108,19 @@ func TestCheckInputData(t *testing.T) {
 		}
 		images = append(images, img)
 	}
-	err = checkInputData(images)
+	err = CheckInputData(images)
 	if err == nil {
 		t.Error("Expected: Images have different sizes. Received: nil")
 	}
 	images = nil
 
 	// No error
-	img, err = loadImage("./test/1.png")
+	img, err = loadImage("../test/1.png")
 	if err != nil {
 		t.Error(err)
 	}
 	images = append(images, img)
-	err = checkInputData(images)
+	err = CheckInputData(images)
 	if err != nil {
 		t.Error("Expected: nil. Received: ", err)
 	}
@@ -138,12 +140,43 @@ func TestGetBinary(t *testing.T) {
 
 	// Test with all values in the table
 	for _, pair := range tTable {
-		result := getBinary(pair.value, pair.threshold)
+		result := GetBinary(pair.value, pair.threshold)
 		if result != pair.result {
 			t.Error(
 				"Expected: ", pair.result,
 				"Received: ", result,
 			)
 		}
+	}
+}
+
+func TestGetPixels(t *testing.T) {
+	img, err := loadImage("../test/2.png")
+	if err != nil {
+		t.Error(err)
+	}
+	pixels := GetPixels(img)
+
+	var expectedPixels [][]uint8
+	expectedPixels = append(expectedPixels, []uint8{  0, 255,   0, 255,   0, 255})
+	expectedPixels = append(expectedPixels, []uint8{255, 255, 255, 255, 255,   0})
+	expectedPixels = append(expectedPixels, []uint8{  0, 255, 255,   0, 255, 255})
+	expectedPixels = append(expectedPixels, []uint8{255, 255,   0, 255, 255,   0})
+	expectedPixels = append(expectedPixels, []uint8{  0, 255, 255, 255, 255, 255})
+	expectedPixels = append(expectedPixels, []uint8{255,   0, 255,   0, 255,   0})
+
+	if len(pixels) == len(expectedPixels) {
+		for row := 0; row < len(pixels); row++ {
+			for col := 0; col < len(pixels[0]); col++ {
+				if pixels[row][col] != expectedPixels[row][col] {
+					t.Error(
+						"Expected value : ", expectedPixels[row][col],
+						"Received value : ", pixels[row][col],
+					)
+				}
+			}
+		}
+	} else {
+		t.Error("Slices have different sizes")
 	}
 }

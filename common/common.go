@@ -10,12 +10,18 @@ import (
 
 // getSize is responsible for get the width and height from the image
 func GetSize(img image.Image) (int, int) {
+	if img == nil {
+		return 0, 0
+	}
 	bounds := img.Bounds()
 	return bounds.Max.X, bounds.Max.Y
 }
 
 // isGrayscale function is responsible for check if an image is in grayscale.
 func IsGrayscale(img image.Image) bool {
+	if img == nil {
+		return false
+	}
 	// Gets the width and height of the image
 	w, h := GetSize(img)
 
@@ -39,9 +45,18 @@ func IsGrayscale(img image.Image) bool {
 // checkInputData function is responsible for check if all images are in
 // grayscale and have the same size (width and height)
 func CheckInputData(images []image.Image) error {
+	if len(images) == 0 {
+		return errors.New("Empty slice")
+	}
+	if images[0] == nil {
+		return errors.New("One or more images are nil")
+	}
 	width, height := GetSize(images[0])
 
 	for index := 0; index < len(images); index++ {
+		if images[index] == nil {
+			return errors.New("One or more images are nil")
+		}
 		// Check if the image is in grayscale
 		if !IsGrayscale(images[index]) {
 			return errors.New("One or more images are not in grayscale")
@@ -69,9 +84,12 @@ func GetBinary(value, threshold uint8) string {
 
 // Return a 'matrix' containing all pixels from the image passed by parameter
 func GetPixels(img image.Image) [][]uint8 {
+	var pixels [][]uint8
+	if img == nil {
+		return pixels
+	}
 	w, h := GetSize(img)
 
-	var pixels [][]uint8
 	for row := 0; row < w; row++ {
 		var r []uint8
 		for col := 0; col < h; col++ {
