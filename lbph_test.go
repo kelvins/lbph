@@ -30,9 +30,9 @@ func loadImage(filePath string) (image.Image, error) {
 func TestPredict(t *testing.T) {
 
 	var paths []string
-	paths = append(paths, "./train/1.png")
-	paths = append(paths, "./train/2.png")
-	paths = append(paths, "./train/3.png")
+	paths = append(paths, "./dataset/train/1.png")
+	paths = append(paths, "./dataset/train/2.png")
+	paths = append(paths, "./dataset/train/3.png")
 
 	var labels []string
 	labels = append(labels, "1")
@@ -54,7 +54,7 @@ func TestPredict(t *testing.T) {
 		t.Error(err)
 	}
 
-	img, err := loadImage("./test/1.png")
+	img, err := loadImage("./dataset/test/1.png")
 	if err != nil {
 		t.Error(err)
 	}

@@ -34,9 +34,9 @@ func TestGetSize(t *testing.T) {
 		width  int
 		height int
 	}{
-		{"../test/1.png", 200, 200},
-		{"../test/2.png", 6, 6},
-		{"../test/3.png", 256, 256},
+		{"../dataset/test/1.png", 200, 200},
+		{"../dataset/test/2.png", 6, 6},
+		{"../dataset/test/3.png", 256, 256},
 	}
 
 	// Test with all values in the table
@@ -64,9 +64,9 @@ func TestIsGrayscale(t *testing.T) {
 		path string
 		res  bool
 	}{
-		{"../test/1.png", true},
-		{"../test/2.png", true},
-		{"../test/3.png", false},
+		{"../dataset/test/1.png", true},
+		{"../dataset/test/2.png", true},
+		{"../dataset/test/3.png", false},
 	}
 
 	// Test with all values in the table
@@ -85,7 +85,7 @@ func TestIsGrayscale(t *testing.T) {
 func TestCheckInputData(t *testing.T) {
 	// Image is not in grayscale
 	var images []image.Image
-	img, err := loadImage("../test/3.png")
+	img, err := loadImage("../dataset/test/3.png")
 	if err != nil {
 		t.Error(err)
 	}
@@ -98,8 +98,8 @@ func TestCheckInputData(t *testing.T) {
 
 	// Images have different sizes
 	var paths []string
-	paths = append(paths, "../test/1.png")
-	paths = append(paths, "../test/2.png")
+	paths = append(paths, "../dataset/test/1.png")
+	paths = append(paths, "../dataset/test/2.png")
 
 	for index := 0; index < len(paths); index++ {
 		img, err := loadImage(paths[index])
@@ -115,7 +115,7 @@ func TestCheckInputData(t *testing.T) {
 	images = nil
 
 	// No error
-	img, err = loadImage("../test/1.png")
+	img, err = loadImage("../dataset/test/1.png")
 	if err != nil {
 		t.Error(err)
 	}
@@ -151,7 +151,7 @@ func TestGetBinary(t *testing.T) {
 }
 
 func TestGetPixels(t *testing.T) {
-	img, err := loadImage("../test/2.png")
+	img, err := loadImage("../dataset/test/2.png")
 	if err != nil {
 		t.Error(err)
 	}
