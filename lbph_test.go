@@ -59,9 +59,9 @@ func TestPredict(t *testing.T) {
 		path  string
 		label string
 	}{
-		{"../dataset/test/1.png", "wood"},
-		{"../dataset/test/2.png", "rocks"},
-		{"../dataset/test/3.png", "grass"},
+		{"./dataset/test/1.png", "wood"},
+		{"./dataset/test/2.png", "rocks"},
+		{"./dataset/test/3.png", "grass"},
 	}
 
 	// Test with all values in the table
@@ -77,7 +77,7 @@ func TestPredict(t *testing.T) {
 				"Received label", lbl,
 			)
 		}
-		if dist > 500 || dist < 0 {
+		if dist > 3000 || dist < 0 {
 			t.Error("Received dist : ", dist)
 		}
 	}
