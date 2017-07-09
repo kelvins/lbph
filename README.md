@@ -24,7 +24,7 @@ In this section, it is shown a step-by-step explanation of the LBPH algorithm:
 
 - The histograms comparison function is using euclidean distance as follows:
 
-$D_{L2} = \sqrt{\sum_{i}\left( h_1(i) - h_2(i) \right) ^2 }$
+![Euclidean Distance](http://i.imgur.com/liBbl6u.gif)
 
 - It is currently using a fixed radius of 1.
 
@@ -100,14 +100,6 @@ func main() {
 	fmt.Println("Predicted as subject", lbl)
 }
 ```
-
-## Documentation
-
-You can access the full documentation [here](https://godoc.org/github.com/kelvins/lbph).
-
-## License
-
-This project was created under the [MIT license](LICENSE).
 
 ## How to contribute
 
