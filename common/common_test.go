@@ -6,7 +6,7 @@ import (
 )
 
 func TestLoadImage(t *testing.T) {
-	// Open the file image
+	// Try to load an image from an invalid path
 	img, err := LoadImage("testingInvalid.png")
 	if err == nil {
 		t.Error("Expected an erro. The file does not exist")
@@ -15,6 +15,7 @@ func TestLoadImage(t *testing.T) {
 		t.Error("Expected img as nil")
 	}
 
+	// Try to load an image from a valid path
 	img, err = LoadImage("../dataset/test/1.png")
 	if err != nil {
 		t.Error("Expected no errors")
@@ -84,17 +85,16 @@ func TestIsGrayscale(t *testing.T) {
 }
 
 func TestCheckInputData(t *testing.T) {
-	// Image is not in grayscale
 	var images []image.Image
-	img, err := LoadImage("../dataset/test/5.png")
-	if err != nil {
-		t.Error(err)
-	}
+	// Image is not in grayscale
+	img, _ := LoadImage("../dataset/test/5.png")
 	images = append(images, img)
-	err = CheckInputData(images)
+
+	err := CheckInputData(images)
 	if err == nil {
 		t.Error("Expected: Image is not in grayscale. Received: nil")
 	}
+
 	images = nil
 
 	// Images have different sizes
@@ -103,24 +103,21 @@ func TestCheckInputData(t *testing.T) {
 	paths = append(paths, "../dataset/test/4.png")
 
 	for index := 0; index < len(paths); index++ {
-		img, err := LoadImage(paths[index])
-		if err != nil {
-			t.Error(err)
-		}
+		img, _ := LoadImage(paths[index])
 		images = append(images, img)
 	}
+
 	err = CheckInputData(images)
 	if err == nil {
 		t.Error("Expected: Images have different sizes. Received: nil")
 	}
+
 	images = nil
 
 	// No error
-	img, err = LoadImage("../dataset/test/1.png")
-	if err != nil {
-		t.Error(err)
-	}
+	img, _ = LoadImage("../dataset/test/1.png")
 	images = append(images, img)
+
 	err = CheckInputData(images)
 	if err != nil {
 		t.Error("Expected: nil. Received: ", err)
