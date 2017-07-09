@@ -1,5 +1,8 @@
 # Local Binary Patterns Histograms (LBPH)
 
+[![GoDoc](https://godoc.org/github.com/kelvins/lbph?status.svg)](https://godoc.org/github.com/kelvins/lbph)
+[![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](LICENSE)
+
 Local Binary Patterns (LBP) is a type of visual descriptor used for classification in computer vision. LBP was first described in 1994 and has since been found to be a powerful feature for texture classification. It has further been determined that when LBP is combined with the Histogram of oriented gradients (HOG) descriptor, it improves the detection performance considerably on some datasets.
 
 ## Installation
@@ -100,15 +103,15 @@ func main() {
 
 ## Documentation
 
-You can access the full documentation here: [![GoDoc](https://godoc.org/github.com/kelvins/lbph?status.svg)](https://godoc.org/github.com/kelvins/lbph)
+You can access the full documentation [here](https://godoc.org/github.com/kelvins/lbph).
 
 ## License
 
-This project was created under the **MIT license**. You can read the license here: [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](LICENSE)
+This project was created under the [MIT license](LICENSE).
 
 ## How to contribute
 
-Feel free to contribute by commenting, suggesting, creating issues or sending pull requests. Any help is welcome.
+Feel free to contribute by commenting, suggesting, creating [issues](https://github.com/kelvins/lbph/issues) or sending pull requests. Any help is welcome.
 
 ### Contributing
 
