@@ -22,11 +22,11 @@ In this section, it is shown a step-by-step explanation of the LBPH algorithm:
 
 ## Important Notes
 
-- The histograms comparison function is using euclidean distance as follows:
+- The similarity between two histograms is calculated using the normalized euclidean distance presented in the following formula:
 
 ![Euclidean Distance](http://i.imgur.com/liBbl6u.gif)
 
-- It is currently using a fixed radius of 1.
+- The current LBPH implementation uses a fixed `radius` of `1` and a fixed number of `neighbors` equal to `8`. In the future, we intend to provide an option to the user set this values as parameters.
 
 ## Usage
 
