@@ -1,34 +1,12 @@
 package lbp
 
 import (
-	"image"
-	"os"
 	"testing"
+	"github.com/kelvins/lbph/common"
 )
 
-func loadImage(filePath string) (image.Image, error) {
-	// Open the file image
-	fImage, err := os.Open(filePath)
-
-	if err != nil {
-		return nil, err
-	}
-
-	// Ensure that the image file will be closed
-	defer fImage.Close()
-
-	// Convert it to an image "object"
-	img, _, err := image.Decode(fImage)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return img, nil
-}
-
 func TestApplyLBP(t *testing.T) {
-	img, err := loadImage("../dataset/test/2.png")
+	img, err := common.LoadImage("../dataset/test/4.png")
 	if err != nil {
 		t.Error(err)
 	}

@@ -2,30 +2,10 @@ package lbph
 
 import (
 	"image"
-	"os"
 	"testing"
+
+	"github.com/kelvins/lbph/common"
 )
-
-func loadImage(filePath string) (image.Image, error) {
-	// Open the file image
-	fImage, err := os.Open(filePath)
-
-	if err != nil {
-		return nil, err
-	}
-
-	// Ensure that the image file will be closed
-	defer fImage.Close()
-
-	// Convert it to an image "object"
-	img, _, err := image.Decode(fImage)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return img, nil
-}
 
 func TestPredict(t *testing.T) {
 
@@ -42,7 +22,7 @@ func TestPredict(t *testing.T) {
 	var images []image.Image
 
 	for index := 0; index < len(paths); index++ {
-		img, err := loadImage(paths[index])
+		img, err := common.LoadImage(paths[index])
 		if err != nil {
 			t.Error(err)
 		}
@@ -66,7 +46,7 @@ func TestPredict(t *testing.T) {
 
 	// Test with all values in the table
 	for _, pair := range tTable {
-		img, _ := loadImage(pair.path)
+		img, _ := common.LoadImage(pair.path)
 		lbl, dist, err := Predict(img)
 		if err != nil {
 			t.Error(err)
