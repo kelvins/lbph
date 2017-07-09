@@ -17,8 +17,15 @@ In this section, it is shown a step-by-step explanation of the LBPH algorithm:
 
 1. First of all, we need to train the algorithm. To do that we just need to call the `Train` function passing a slice of images and a slice of labels.
 2. The `Train` function will check if all images are in grayscale and have the same size.
+3. Then, the `Train` function will apply the basic LBP operation by changing each pixel based on its `8` neighbors using a default radius of `1`. The basic LBP operation can be seen in the following image:
 
 ![LBP operation](http://i.imgur.com/1IEVqnZ.png)
+
+4. After applying the LBP operation we extract the histogram of the grayscale image. It is represented by an integer array of 256 positions.
+5. The images, labels, and histograms are stored in a data structure so we can compare all of it to a new image in the `Predict` function.
+6. Now, the algorithm is already trained and we can Predict a new image.
+7. To predict a new image we just need to call the `Predict` function passing the image as parameter. The `Predict` function will extract the histogram from the new image and will return the label and distance corresponding to the closest histogram if no error has occurred (e.g. the image is not in grayscale, or image does not have the same size).
+8. It uses the normalized euclidean distance to calculate the similarity of the histograms. We can assume that the distance returned by the `Predict` function is the confidence and assume that the algorithm result is correct based on this confidence. The closer to zero is the distance, the greater is the confidence.
 
 ## Important Notes
 
@@ -26,7 +33,7 @@ In this section, it is shown a step-by-step explanation of the LBPH algorithm:
 
 ![Euclidean Distance](http://i.imgur.com/liBbl6u.gif)
 
-- The current LBPH implementation uses a fixed `radius` of `1` and a fixed number of `neighbors` equal to `8`. In the future, we intend to provide an option to the user set this values as parameters.
+- The current LBPH implementation uses a fixed `radius` of `1` and a fixed number of `neighbors` equal to `8`. In the future, we intend to provide an option to the user set these values as parameters.
 
 ## Usage
 
