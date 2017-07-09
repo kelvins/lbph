@@ -6,7 +6,28 @@ import (
 	_ "image/gif"
 	_ "image/jpeg"
 	_ "image/png"
+	"os"
 )
+
+// LoadImage function is used to provide an easy way to load an image file
+func LoadImage(filePath string) (image.Image, error) {
+	// Open the file image
+	fImage, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+
+	// Ensure that the image file will be closed
+	defer fImage.Close()
+
+	// Convert it to an image "object"
+	img, _, err := image.Decode(fImage)
+	if err != nil {
+		return nil, err
+	}
+
+	return img, nil
+}
 
 // GetSize function is responsible for get the width and height from an image
 func GetSize(img image.Image) (int, int) {
