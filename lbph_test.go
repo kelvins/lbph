@@ -35,9 +35,9 @@ func TestPredict(t *testing.T) {
 	paths = append(paths, "./dataset/train/3.png")
 
 	var labels []string
-	labels = append(labels, "1")
-	labels = append(labels, "2")
-	labels = append(labels, "3")
+	labels = append(labels, "rocks")
+	labels = append(labels, "grass")
+	labels = append(labels, "wood")
 
 	var images []image.Image
 
@@ -54,19 +54,31 @@ func TestPredict(t *testing.T) {
 		t.Error(err)
 	}
 
-	img, err := loadImage("./dataset/test/1.png")
-	if err != nil {
-		t.Error(err)
+	// Table tests
+	var tTable = []struct {
+		path  string
+		label string
+	}{
+		{"../dataset/test/1.png", "wood"},
+		{"../dataset/test/2.png", "rocks"},
+		{"../dataset/test/3.png", "grass"},
 	}
 
-	lbl, dist, err := Predict(img)
-	if err != nil {
-		t.Error(err)
-	}
-	if lbl != "3" {
-		t.Error("Expected label == 3 - Received", lbl)
-	}
-	if dist > 500 || dist < 0 {
-		t.Error("Received dist : ", dist)
+	// Test with all values in the table
+	for _, pair := range tTable {
+		img, _ := loadImage(pair.path)
+		lbl, dist, err := Predict(img)
+		if err != nil {
+			t.Error(err)
+		}
+		if lbl != pair.label {
+			t.Error(
+				"Expected label", pair.label,
+				"Received label", lbl,
+			)
+		}
+		if dist > 500 || dist < 0 {
+			t.Error("Received dist : ", dist)
+		}
 	}
 }

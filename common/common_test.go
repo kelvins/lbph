@@ -2,29 +2,26 @@ package common
 
 import (
 	"image"
-	"os"
 	"testing"
 )
 
-func loadImage(filePath string) (image.Image, error) {
+func TestLoadImage(t *testing.T) {
 	// Open the file image
-	fImage, err := os.Open(filePath)
-
-	if err != nil {
-		return nil, err
+	img, err := LoadImage("testingInvalid.png")
+	if err == nil {
+		t.Error("Expected an erro. The file does not exist")
+	}
+	if img != nil {
+		t.Error("Expected img as nil")
 	}
 
-	// Ensure that the image file will be closed
-	defer fImage.Close()
-
-	// Convert it to an image "object"
-	img, _, err := image.Decode(fImage)
-
+	img, err = LoadImage("../dataset/test/1.png")
 	if err != nil {
-		return nil, err
+		t.Error("Expected no errors")
 	}
-
-	return img, nil
+	if img == nil {
+		t.Error("Expected a not nil img")
+	}
 }
 
 func TestGetSize(t *testing.T) {
@@ -35,13 +32,15 @@ func TestGetSize(t *testing.T) {
 		height int
 	}{
 		{"../dataset/test/1.png", 200, 200},
-		{"../dataset/test/2.png", 6, 6},
-		{"../dataset/test/3.png", 256, 256},
+		{"../dataset/test/2.png", 200, 200},
+		{"../dataset/test/3.png", 200, 200},
+		{"../dataset/test/4.png", 6, 6},
+		{"../dataset/test/5.png", 256, 256},
 	}
 
 	// Test with all values in the table
 	for _, pair := range tTable {
-		img, _ := loadImage(pair.path)
+		img, _ := LoadImage(pair.path)
 		width, height := GetSize(img)
 		if width != pair.width {
 			t.Error(
@@ -66,12 +65,14 @@ func TestIsGrayscale(t *testing.T) {
 	}{
 		{"../dataset/test/1.png", true},
 		{"../dataset/test/2.png", true},
-		{"../dataset/test/3.png", false},
+		{"../dataset/test/3.png", true},
+		{"../dataset/test/4.png", true},
+		{"../dataset/test/5.png", false},
 	}
 
 	// Test with all values in the table
 	for _, pair := range tTable {
-		img, _ := loadImage(pair.path)
+		img, _ := LoadImage(pair.path)
 		res := IsGrayscale(img)
 		if res != pair.res {
 			t.Error(
@@ -85,7 +86,7 @@ func TestIsGrayscale(t *testing.T) {
 func TestCheckInputData(t *testing.T) {
 	// Image is not in grayscale
 	var images []image.Image
-	img, err := loadImage("../dataset/test/3.png")
+	img, err := LoadImage("../dataset/test/5.png")
 	if err != nil {
 		t.Error(err)
 	}
@@ -99,10 +100,10 @@ func TestCheckInputData(t *testing.T) {
 	// Images have different sizes
 	var paths []string
 	paths = append(paths, "../dataset/test/1.png")
-	paths = append(paths, "../dataset/test/2.png")
+	paths = append(paths, "../dataset/test/4.png")
 
 	for index := 0; index < len(paths); index++ {
-		img, err := loadImage(paths[index])
+		img, err := LoadImage(paths[index])
 		if err != nil {
 			t.Error(err)
 		}
@@ -115,7 +116,7 @@ func TestCheckInputData(t *testing.T) {
 	images = nil
 
 	// No error
-	img, err = loadImage("../dataset/test/1.png")
+	img, err = LoadImage("../dataset/test/1.png")
 	if err != nil {
 		t.Error(err)
 	}
@@ -151,7 +152,7 @@ func TestGetBinary(t *testing.T) {
 }
 
 func TestGetPixels(t *testing.T) {
-	img, err := loadImage("../dataset/test/2.png")
+	img, err := LoadImage("../dataset/test/4.png")
 	if err != nil {
 		t.Error(err)
 	}
