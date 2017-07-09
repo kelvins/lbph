@@ -34,7 +34,7 @@ func GetHistogram(img image.Image) ([256]int64, error) {
 
 // GetHistogramDist function calculates the distance between two histograms
 // using euclidean distance: sum = sqrt((h1(i)-h2(i))^2)
-func GetHistogramDist(hist1, hist2 [256]int64) float64 {
+func CalcHistogramDist(hist1, hist2 [256]int64) float64 {
 	var sum float64
 	for index := 0; index < len(hist1); index++ {
 		sum += float64((hist1[index] - hist2[index]) * (hist1[index] - hist2[index]))

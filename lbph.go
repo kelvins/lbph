@@ -82,11 +82,11 @@ func Predict(img image.Image) (string, float64, error) {
 	}
 
 	// Search for the closest histogram based on the histograms calculated in the Train function
-	minValue := histogram.GetHistogramDist(hist, Data.Histograms[0])
+	minValue := histogram.CalcHistogramDist(hist, Data.Histograms[0])
 	minIndex := 0
 	for index := 1; index < len(Data.Histograms); index++ {
 		// Calculate the distance from the current histogram
-		dist := histogram.GetHistogramDist(hist, Data.Histograms[index])
+		dist := histogram.CalcHistogramDist(hist, Data.Histograms[index])
 		// If it is closer, save the minValue and the index
 		if dist < minValue {
 			minValue = dist
