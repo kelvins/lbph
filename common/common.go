@@ -126,16 +126,17 @@ func GetPixels(img image.Image) [][]uint8 {
 	// Get the image size
 	w, h := GetSize(img)
 
-	for row := 0; row < w; row++ {
-		var cRow []uint8
-		for col := 0; col < h; col++ {
+	for x := 0; x < w; x++ {
+		var row []uint8
+		for y := 0; y < h; y++ {
 			// As the image is in grayscale the red value should be equal to green and blue
-			red, _, _, _ := img.At(row, col).RGBA()
+			r, g, b, _ := img.At(x, y).RGBA()
+			pixel := (float32(r)*0.299)+(float32(g)*0.587)+(float32(b)*0.114)
 			// Convert to uint8 (0-255) and append to the slice
-			cRow = append(cRow, uint8(red))
+			row = append(row, uint8(pixel))
 		}
 		// Append the slice to the pixels
-		pixels = append(pixels, cRow)
+		pixels = append(pixels, row)
 	}
 	return pixels
 }
