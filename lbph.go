@@ -13,8 +13,39 @@ import (
 	"github.com/kelvins/lbph/structs"
 )
 
-// Struct that stores the Data loaded by the user
-var Data structs.Data
+var (
+	// Struct that stores the Data loaded by the user
+	Data structs.Data
+
+	// LBPH parameters
+	lbphParameters = structs.LBPHParameters{
+		Radius:    1,
+		Neighbors: 8,
+		GridX:     8,
+		GridY:     8,
+	}
+)
+
+func Init(parameters structs.LBPHParameters) {
+
+	if parameters.Radius <= 0 {
+		parameters.Radius = 1
+	}
+
+	if parameters.Neighbors <= 0 {
+		parameters.Neighbors = 8
+	}
+
+	if parameters.GridX <= 0 {
+		parameters.GridX = 8
+	}
+
+	if parameters.GridY <= 0 {
+		parameters.GridY = 8
+	}
+
+	lbphParameters = parameters
+}
 
 // Train function is used to train the LBPH algorithm
 func Train(images []image.Image, labels []string) error {
