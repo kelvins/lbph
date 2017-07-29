@@ -19,9 +19,12 @@ In this section, it is shown a step-by-step explanation of the LBPH algorithm:
 2. The `Train` function will check if all images are in grayscale and have the same size.
 3. Then, the `Train` function will apply the basic LBP operation by changing each pixel based on its `8` neighbors using a default radius of `1`. The basic LBP operation can be seen in the following image:
 
-![LBP operation](http://i.imgur.com/1IEVqnZ.png)
+![LBP operation](http://i.imgur.com/G4PqJPe.png)
 
-4. After applying the LBP operation we extract the histogram of the grayscale image. It is represented by an integer array of 256 positions.
+4. After applying the LBP operation we extract the histograms of the grayscale image based on the number of grids (X and Y) passed by parameter. After extracting the histogram of each region, we concatenate all histograms and create a new one that will be used to represent the image.
+
+![Histograms](http://i.imgur.com/3BGk130.png)
+
 5. The images, labels, and histograms are stored in a data structure so we can compare all of it to a new image in the `Predict` function.
 6. Now, the algorithm is already trained and we can Predict a new image.
 7. To predict a new image we just need to call the `Predict` function passing the image as parameter. The `Predict` function will extract the histogram from the new image and will return the label and distance corresponding to the closest histogram if no error has occurred (e.g. the image is not in grayscale, or image does not have the same size).
