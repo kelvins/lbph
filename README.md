@@ -41,7 +41,15 @@ Usage example:
 
 ``` go
 package main
+
+func main() {
+
+}
 ```
+
+## References
+
+Ahonen, Timo, Abdenour Hadid, and Matti Pietikäinen. "Face recognition with local binary patterns." Computer vision-eccv 2004 (2004): 469-481. Link: https://link.springer.com/chapter/10.1007/978-3-540-24670-1_36
 
 ## How to contribute
 
