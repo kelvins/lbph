@@ -12,29 +12,32 @@ import (
 )
 
 // GetHistogram function generates a histogram based on the LBP result
-func GetHistogram(img image.Image) ([256]int64, error) {
-	// The histogram size is fixed (256)
-	var histogram [256]int64
+func GetHistogram(img image.Image, gridX, gridY uint8) ([]uint8, error) {
+	var hist []uint8
 
 	// Calculate the LBP operation
 	lbp, err := lbp.ApplyLBP(img)
 
 	// Check for errors
 	if err != nil {
-		return histogram, errors.New("Error in the LBP operation")
+		return hist, errors.New("Error in the LBP operation")
 	}
 
 	// Creates the histogram by adding each lbp result in the histogram correct position
-	for index := 0; index < len(lbp); index++ {
-		histogram[lbp[index]] += 1
+	for row := 0; row < len(lbp); row++ {
+		for col := 0; col < len(lbp[row]); col++ {
+			//hist[lbp[row][col]] += 1
+			hist = append(hist, 1)
+			// HERE WE NEED TO CREATE THE MULTIPLE HISTOGRAMS AND CONCATENATE IT
+		}
 	}
 
-	return histogram, nil
+	return hist, nil
 }
 
 // GetHistogramDist function calculates the distance between two histograms
 // using euclidean distance: sum = sqrt((h1(i)-h2(i))^2)
-func CalcHistogramDist(hist1, hist2 [256]int64) float64 {
+func CalcHistogramDist(hist1, hist2 []uint8) float64 {
 	var sum float64
 	for index := 0; index < len(hist1); index++ {
 		sum += float64((hist1[index] - hist2[index]) * (hist1[index] - hist2[index]))

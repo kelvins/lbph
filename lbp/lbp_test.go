@@ -11,21 +11,25 @@ func TestApplyLBP(t *testing.T) {
 		t.Error(err)
 	}
 
-	expectedlbp := []int64{93, 183, 91, 173, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
+	var expectedlbp [][]uint8
+	expectedlbp = append(expectedlbp, []uint8{ 91, 190,  93, 179})
+	expectedlbp = append(expectedlbp, []uint8{238, 245, 255, 206})
+	expectedlbp = append(expectedlbp, []uint8{115, 255, 175, 119})
+	expectedlbp = append(expectedlbp, []uint8{205, 186, 125, 218})
+
 	lbp, err := ApplyLBP(img)
 	if err != nil {
 		t.Error(err)
 	}
-	if len(lbp) == len(expectedlbp) {
-		for index := 0; index < len(lbp); index++ {
-			/*if lbp[index] != expectedlbp[index] {
+
+	for row := 0; row < len(lbp); row++ {
+		for col := 0; col < len(lbp[row]); col++ {
+			if lbp[row][col] != expectedlbp[row][col] {
 				t.Error(
-					"Expected value: ", expectedlbp[index],
-					"Received value: ", lbp[index],
+					"Expected value: ", expectedlbp[row][col],
+					"Received value: ", lbp[row][col],
 				)
-			}*/
+			}
 		}
-	} else {
-		t.Error("Different size")
 	}
 }

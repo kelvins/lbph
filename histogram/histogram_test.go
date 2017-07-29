@@ -13,31 +13,32 @@ func floatEquals(a, b float64) bool {
 }
 
 func TestCalcHistogramDist(t *testing.T) {
-	var hist1 [256]int64
-	var hist2 [256]int64
+	var hist1 []uint8
+	var hist2 []uint8
 
-	hist1[0] = 15
-	hist2[0] = 5
-	hist1[255] = 50
-	hist2[255] = 40
+	var index uint8
+	for index = 0; index < 100; index++ {
+		hist1 = append(hist1, uint8(index))
+		hist2 = append(hist2, uint8(index))
+	}
 
 	dist := CalcHistogramDist(hist1, hist2)
-	if !floatEquals(dist, 14.142135623730951) {
+	if !floatEquals(dist, 0.0) {
 		t.Error(
-			"Expected distance:", 14.142135623730951,
+			"Expected distance:", 0.0,
 			"Received distance:", dist,
 		)
 	}
 
-	hist1[0] = 15
-	hist2[0] = 15
-	hist1[255] = 50
-	hist2[255] = 50
+	for index = 0; index < 100; index++ {
+		hist1 = append(hist1, uint8(index))
+		hist2 = append(hist2, uint8(index+1))
+	}
 
 	dist = CalcHistogramDist(hist1, hist2)
-	if !floatEquals(dist, 0.0) {
+	if !floatEquals(dist, 10.0) {
 		t.Error(
-			"Expected distance:", 0.0,
+			"Expected distance:", 10.0,
 			"Received distance:", dist,
 		)
 	}

@@ -6,7 +6,7 @@ import "image"
 type Data struct {
 	Images     []image.Image
 	Labels     []string
-	Histograms [][256]int64
+	Histograms [][]uint8
 }
 
 // Structure used to pass the LBPH parameters

@@ -38,33 +38,7 @@ func GetSize(img image.Image) (int, int) {
 	return bounds.Max.X, bounds.Max.Y
 }
 
-// IsGrayscale function is responsible for check if an image is in grayscale.
-func IsGrayscale(img image.Image) bool {
-	if img == nil {
-		return false
-	}
-	// Gets the width and height of the image
-	w, h := GetSize(img)
-
-	if w == 0 || h == 0 {
-		return false
-	}
-
-	// Verifies each pixel (R,G,B)
-	for x := 0; x < w; x++ {
-		for y := 0; y < h; y++ {
-			r, g, b, _ := img.At(x, y).RGBA()
-			if r != g && g != b {
-				return false
-			}
-		}
-	}
-
-	return true
-}
-
-// CheckInputData function is responsible for check if all images are in
-// grayscale and have the same size (width and height)
+// CheckInputData function is responsible for check if all images have the same size
 func CheckInputData(images []image.Image) error {
 	// Check if the slice is empty
 	if len(images) == 0 {
@@ -87,10 +61,6 @@ func CheckInputData(images []image.Image) error {
 		// Check if the current image is nil
 		if images[index] == nil {
 			return errors.New("One or more images are nil")
-		}
-		// Check if the current image is in grayscale
-		if !IsGrayscale(images[index]) {
-			return errors.New("One or more images are not in grayscale")
 		}
 
 		// Get the size from the current image

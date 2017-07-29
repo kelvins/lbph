@@ -58,44 +58,8 @@ func TestGetSize(t *testing.T) {
 	}
 }
 
-func TestIsGrayscale(t *testing.T) {
-	// Table tests
-	var tTable = []struct {
-		path string
-		res  bool
-	}{
-		{"../dataset/test/1.png", true},
-		{"../dataset/test/2.png", true},
-		{"../dataset/test/3.png", true},
-		{"../dataset/test/4.png", true},
-		{"../dataset/test/5.png", false},
-	}
-
-	// Test with all values in the table
-	for _, pair := range tTable {
-		img, _ := LoadImage(pair.path)
-		res := IsGrayscale(img)
-		if res != pair.res {
-			t.Error(
-				"Expected: ", pair.res,
-				"Received: ", res,
-			)
-		}
-	}
-}
-
 func TestCheckInputData(t *testing.T) {
 	var images []image.Image
-	// Image is not in grayscale
-	img, _ := LoadImage("../dataset/test/5.png")
-	images = append(images, img)
-
-	err := CheckInputData(images)
-	if err == nil {
-		t.Error("Expected: Image is not in grayscale. Received: nil")
-	}
-
-	images = nil
 
 	// Images have different sizes
 	var paths []string
@@ -107,7 +71,7 @@ func TestCheckInputData(t *testing.T) {
 		images = append(images, img)
 	}
 
-	err = CheckInputData(images)
+	err := CheckInputData(images)
 	if err == nil {
 		t.Error("Expected: Images have different sizes. Received: nil")
 	}
@@ -115,7 +79,7 @@ func TestCheckInputData(t *testing.T) {
 	images = nil
 
 	// No error
-	img, _ = LoadImage("../dataset/test/1.png")
+	img, _ := LoadImage("../dataset/test/1.png")
 	images = append(images, img)
 
 	err = CheckInputData(images)

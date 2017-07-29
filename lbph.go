@@ -65,7 +65,7 @@ func Train(images []image.Image, labels []string) error {
 	}
 
 	// Call the CheckInputData from the common package
-	// It will check if all images are in grayscale and have the same size
+	// It will check if all images have the same size
 	err := common.CheckInputData(images)
 	if err != nil {
 		return err
@@ -73,9 +73,9 @@ func Train(images []image.Image, labels []string) error {
 
 	// Call the GetHistogram from the histogram package
 	// It will run the LBP operation and generate the histogram for each image
-	var histograms [][256]int64
+	var histograms [][]uint8
 	for index := 0; index < len(images); index++ {
-		hist, err := histogram.GetHistogram(images[index])
+		hist, err := histogram.GetHistogram(images[index], lbphParameters.GridX, lbphParameters.GridY)
 		if err != nil {
 			return err
 		}
@@ -107,7 +107,7 @@ func Predict(img image.Image) (string, float64, error) {
 	}
 
 	// Calculate the histogram for the current image
-	hist, err := histogram.GetHistogram(img)
+	hist, err := histogram.GetHistogram(img, lbphParameters.GridX, lbphParameters.GridY)
 	if err != nil {
 		return "", 0.0, errors.New("Could not get the image histogram")
 	}
