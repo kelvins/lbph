@@ -5,6 +5,8 @@
 
 Local Binary Patterns (LBP) is a type of visual descriptor used for classification in computer vision. LBP was first described in 1994 and has since been found to be a powerful feature for texture classification. It has further been determined that when LBP is combined with the Histogram of oriented gradients (HOG) descriptor, it improves the detection performance considerably on some datasets.
 
+As LBP is a visual descriptor it can also be used for face recognition tasks, as can be seen in the following Step-by-Step explanation.
+
 ## Step-by-Step
 
 In this section, it is shown a step-by-step explanation of the LBPH algorithm:
@@ -35,7 +37,7 @@ In this section, it is shown a step-by-step explanation of the LBPH algorithm:
 ## Installation
 
 ```
-go get github.com/kelvins/lbph
+$ go get github.com/kelvins/lbph
 ```
 
 ## Usage
@@ -43,25 +45,49 @@ go get github.com/kelvins/lbph
 Usage example:
 
 ``` go
+
 package main
+
+import (
+	"fmt"
+
+	"github.com/kelvins/lbph"
+)
 
 func main() {
 
+	parameters = lbph.Parameters{
+		Radius:    1,
+		Neighbors: 8,
+		GridX:     8,
+		GridY:     8,
+	}
+
+	lbph.Init(parameters)
+
+	fmt.Println("")
 }
+
+
 ```
 
 ## Parameters
 
-* Radius: The radius used for building the Circular Local Binary Pattern. Default value is 1.
-* Neighbors: The number of sample points to build a Circular Local Binary Pattern from. Keep in mind: the more sample points you include, the higher the computational cost. Default value is 8.
-* GridX: The number of cells in the horizontal direction. The more cells, the finer the grid, the higher the dimensionality of the resulting feature vector. Default value is 8.
-* GridY: The number of cells in the vertical direction. The more cells, the finer the grid, the higher the dimensionality of the resulting feature vector. Default value is 8.
+* **Radius**: The radius used for building the Circular Local Binary Pattern. Default value is 1.
 
-References: [OpenCV Documentation](http://docs.opencv.org/3.0-beta/modules/face/doc/facerec/facerec_api.html).
+* **Neighbors**: The number of sample points to build a Circular Local Binary Pattern from. Keep in mind: the more sample points you include, the higher the computational cost. Default value is 8.
+
+* **GridX**: The number of cells in the horizontal direction. The more cells, the finer the grid, the higher the dimensionality of the resulting feature vector. Default value is 8.
+
+* **GridY**: The number of cells in the vertical direction. The more cells, the finer the grid, the higher the dimensionality of the resulting feature vector. Default value is 8.
 
 ## References
 
-Ahonen, Timo, Abdenour Hadid, and Matti Pietikäinen. "Face recognition with local binary patterns." Computer vision-eccv 2004 (2004): 469-481. Link: https://link.springer.com/chapter/10.1007/978-3-540-24670-1_36
+* Ahonen, Timo, Abdenour Hadid, and Matti Pietikäinen. "Face recognition with local binary patterns." Computer vision-eccv 2004 (2004): 469-481. Link: https://link.springer.com/chapter/10.1007/978-3-540-24670-1_36
+
+* Face Recognizer module. Open Source Computer Vision Library (OpenCV) Documentation. Version 3.0. Link: http://docs.opencv.org/3.0-beta/modules/face/doc/facerec/facerec_api.html
+
+* Local binary patterns. Wikipedia. Link: https://en.wikipedia.org/wiki/Local_binary_patterns
 
 ## How to contribute
 
