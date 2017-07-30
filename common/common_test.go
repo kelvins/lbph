@@ -3,25 +3,36 @@ package common
 import (
 	"image"
 	"testing"
+	"errors"
 )
 
 func TestLoadImage(t *testing.T) {
-	// Try to load an image from an invalid path
-	img, err := LoadImage("testingInvalid.png")
-	if err == nil {
-		t.Error("Expected an erro. The file does not exist")
-	}
-	if img != nil {
-		t.Error("Expected img as nil")
+	// Table tests
+	var tTable = []struct {
+		path string
+		err  error
+	}{
+		{"testingInvalid.png", errors.New("Invalid path")},
+		{"../dataset/test/1.png", nil},
 	}
 
-	// Try to load an image from a valid path
-	img, err = LoadImage("../dataset/test/1.png")
-	if err != nil {
-		t.Error("Expected no errors")
-	}
-	if img == nil {
-		t.Error("Expected a not nil img")
+	for _, pair := range tTable {
+		img, err := LoadImage(pair.path)
+		if pair.err == nil {
+			if err != nil {
+				t.Error("Expected no errors")
+			}
+			if img == nil {
+				t.Error("Expected a valid img")
+			}
+		} else {
+			if err == nil {
+				t.Error("Expected an erro. The file does not exist")
+			}
+			if img != nil {
+				t.Error("Expected a nil img")
+			}
+		}
 	}
 }
 
@@ -58,7 +69,7 @@ func TestGetSize(t *testing.T) {
 	}
 }
 
-func TestCheckInputData(t *testing.T) {
+func TestCheckImagesSizes(t *testing.T) {
 	var images []image.Image
 
 	// Images have different sizes
@@ -80,6 +91,8 @@ func TestCheckInputData(t *testing.T) {
 
 	// No error
 	img, _ := LoadImage("../dataset/test/1.png")
+	images = append(images, img)
+	img, _ = LoadImage("../dataset/test/2.png")
 	images = append(images, img)
 
 	err = CheckImagesSizes(images)
