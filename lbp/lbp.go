@@ -11,31 +11,43 @@ import (
 	"github.com/kelvins/lbph/common"
 )
 
-// ApplyLBP applies the LBP operation using radius equal to 1
-// We need to implement a way to apply the LBP based on a different radius passed by parameter
-func ApplyLBP(img image.Image) ([][]uint8, error) {
+// ApplyLBP applies the LBP operation based on the radius and neighbors passed by parameter
+// The radius and neighbors parameters are not in use
+func ApplyLBP(img image.Image, radius, neighbors uint8) ([][]uint8, error) {
+
+	var lbpPixels [][]uint8
+	// Check the parameters
+	if img == nil {
+		return lbpPixels, errors.New("Invalid image")
+	}
+	if radius <= 0 {
+		return lbpPixels, errors.New("Invalid radius parameter")
+	}
+	if neighbors <= 0 {
+		return lbpPixels, errors.New("Invalid neighbors parameter")
+	}
+
 	// Get the pixels 'matrix' ([][]uint8)
 	pixels := common.GetPixels(img)
 
 	// Get the image size (width and height)
-	w, h := common.GetSize(img)
+	width, height := common.GetSize(img)
 
-	var lbp [][]uint8
 	// For each pixel in the image
-	for row := 1; row < w-1; row++ {
+	for x := 1; x < width-1; x++ {
 		var currentRow []uint8
-		for col := 1; col < h-1; col++ {
+		for y := 1; y < height-1; y++ {
 
 			// Get the current pixel as the threshold
-			threshold := pixels[row][col]
+			threshold := pixels[x][y]
 
 			binaryResult := ""
-			// Image sample 3x3
-			for r := row - 1; r <= row+1; r++ {
-				for c := col - 1; c <= col+1; c++ {
+			// Window based on the radius (3x3)
+			for tempX := x - 1; tempX <= x+1; tempX++ {
+				for tempY := y - 1; tempY <= y+1; tempY++ {
 					// Get the binary for all pixels around the threshold
-					if r != row || c != col {
-						binaryResult += common.GetBinaryString(pixels[r][c], threshold)
+					if tempX != x || tempY != y {
+						binaryResult += common.GetBinaryString(pixels[tempX][tempY], threshold)
 					}
 				}
 			}
@@ -43,13 +55,15 @@ func ApplyLBP(img image.Image) ([][]uint8, error) {
 			// Convert the binary string to a decimal integer
 			dec, err := strconv.ParseUint(binaryResult, 2, 8)
 			if err != nil {
-				return lbp, errors.New("Error normalizing the images")
+				return lbpPixels, errors.New("Error applying the LBP operation")
 			} else {
 				// Append the decimal do the result slice
+				// ParseUint returns a uint64 so we need to convert it to uint8
 				currentRow = append(currentRow, uint8(dec))
 			}
 		}
-		lbp = append(lbp, currentRow)
+		// Append the slice to the 'matrix'
+		lbpPixels = append(lbpPixels, currentRow)
 	}
-	return lbp, nil
+	return lbpPixels, nil
 }

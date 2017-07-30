@@ -10,6 +10,7 @@ import (
 
 	"github.com/kelvins/lbph/common"
 	"github.com/kelvins/lbph/histogram"
+	"github.com/kelvins/lbph/lbp"
 )
 
 // Structure used to pass the LBPH parameters
@@ -89,7 +90,12 @@ func Train(images []image.Image, labels []string) error {
 	// It will run the LBP operation and generate the histogram for each image
 	var histograms [][]uint8
 	for index := 0; index < len(images); index++ {
-		hist, err := histogram.GetHistogram(images[index], lbphParameters.GridX, lbphParameters.GridY)
+		// Calculate the LBP operation
+		pixels, err := lbp.ApplyLBP(images[index], lbphParameters.Radius, lbphParameters.Neighbors)
+		if err != nil {
+			return err
+		}
+		hist, err := histogram.GetHistogram(pixels, lbphParameters.GridX, lbphParameters.GridY)
 		if err != nil {
 			return err
 		}
@@ -120,8 +126,13 @@ func Predict(img image.Image) (string, float64, error) {
 		return "", 0.0, errors.New("Could not get the image histogram")
 	}
 
+	// Calculate the LBP operation
+	pixels, err := lbp.ApplyLBP(img, lbphParameters.Radius, lbphParameters.Neighbors)
+	if err != nil {
+		return "", 0.0, err
+	}
 	// Calculate the histogram for the current image
-	hist, err := histogram.GetHistogram(img, lbphParameters.GridX, lbphParameters.GridY)
+	hist, err := histogram.GetHistogram(pixels, lbphParameters.GridX, lbphParameters.GridY)
 	if err != nil {
 		return "", 0.0, errors.New("Could not get the image histogram")
 	}

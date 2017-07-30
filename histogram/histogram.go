@@ -1,31 +1,17 @@
 package histogram
 
 import (
-	"errors"
-	"image"
-	_ "image/gif"
-	_ "image/jpeg"
-	_ "image/png"
+	//"errors"
 	"math"
-
-	"github.com/kelvins/lbph/lbp"
 )
 
 // GetHistogram function generates a histogram based on the LBP result
-func GetHistogram(img image.Image, gridX, gridY uint8) ([]uint8, error) {
+func GetHistogram(pixels [][]uint8, gridX, gridY uint8) ([]uint8, error) {
 	var hist []uint8
 
-	// Calculate the LBP operation
-	lbp, err := lbp.ApplyLBP(img)
-
-	// Check for errors
-	if err != nil {
-		return hist, errors.New("Error in the LBP operation")
-	}
-
 	// Creates the histogram by adding each lbp result in the histogram correct position
-	for row := 0; row < len(lbp); row++ {
-		for col := 0; col < len(lbp[row]); col++ {
+	for x := 0; x < len(pixels); x++ {
+		for y := 0; y < len(pixels[x]); y++ {
 			//hist[lbp[row][col]] += 1
 			hist = append(hist, 1)
 			// HERE WE NEED TO CREATE THE MULTIPLE HISTOGRAMS AND CONCATENATE IT

@@ -11,23 +11,25 @@ func TestApplyLBP(t *testing.T) {
 		t.Error(err)
 	}
 
-	var expectedlbp [][]uint8
-	expectedlbp = append(expectedlbp, []uint8{ 91, 190,  93, 179})
-	expectedlbp = append(expectedlbp, []uint8{238, 245, 255, 206})
-	expectedlbp = append(expectedlbp, []uint8{115, 255, 175, 119})
-	expectedlbp = append(expectedlbp, []uint8{205, 186, 125, 218})
+	// Results manually calculated (radius:1 - neighbors:8)
+	var expectedLBP [][]uint8
+	expectedLBP = append(expectedLBP, []uint8{ 91, 190,  93, 179})
+	expectedLBP = append(expectedLBP, []uint8{238, 245, 255, 206})
+	expectedLBP = append(expectedLBP, []uint8{115, 255, 175, 119})
+	expectedLBP = append(expectedLBP, []uint8{205, 186, 125, 218})
 
-	lbp, err := ApplyLBP(img)
+	pixels, err := ApplyLBP(img, 1, 8)
 	if err != nil {
 		t.Error(err)
 	}
 
-	for row := 0; row < len(lbp); row++ {
-		for col := 0; col < len(lbp[row]); col++ {
-			if lbp[row][col] != expectedlbp[row][col] {
+	// Check each pixel
+	for x := 0; x < len(pixels); x++ {
+		for y := 0; y < len(pixels[x]); y++ {
+			if pixels[x][y] != expectedLBP[x][y] {
 				t.Error(
-					"Expected value: ", expectedlbp[row][col],
-					"Received value: ", lbp[row][col],
+					"Expected value: ", expectedLBP[x][y],
+					"Received value: ", pixels[x][y],
 				)
 			}
 		}
