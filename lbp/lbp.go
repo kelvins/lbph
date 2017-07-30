@@ -35,7 +35,7 @@ func ApplyLBP(img image.Image) ([][]uint8, error) {
 				for c := col - 1; c <= col+1; c++ {
 					// Get the binary for all pixels around the threshold
 					if r != row || c != col {
-						binaryResult += common.GetBinary(pixels[r][c], threshold)
+						binaryResult += common.GetBinaryString(pixels[r][c], threshold)
 					}
 				}
 			}

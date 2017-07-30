@@ -9,10 +9,11 @@ import (
 	"os"
 )
 
-// LoadImage function is used to provide an easy way to load an image file
+// LoadImage function is used to provide an easy way to load an image file.
 func LoadImage(filePath string) (image.Image, error) {
-	// Open the file image
+	// Open the image file
 	fImage, err := os.Open(filePath)
+	// Check if no error has occurred
 	if err != nil {
 		return nil, err
 	}
@@ -20,8 +21,9 @@ func LoadImage(filePath string) (image.Image, error) {
 	// Ensure that the image file will be closed
 	defer fImage.Close()
 
-	// Convert it to an image "object"
+	// Decode it to an image "object" (we don't need the format name so we use "_")
 	img, _, err := image.Decode(fImage)
+	// Check if no error has occurred
 	if err != nil {
 		return nil, err
 	}
@@ -29,54 +31,59 @@ func LoadImage(filePath string) (image.Image, error) {
 	return img, nil
 }
 
-// GetSize function is responsible for get the width and height from an image
+// GetSize function is used to get the width and height from an image.
+// If the image is nil it will return 0 width and 0 height
 func GetSize(img image.Image) (int, int) {
 	if img == nil {
 		return 0, 0
 	}
+	// Get the image bounds
 	bounds := img.Bounds()
+	// Return the width and height
 	return bounds.Max.X, bounds.Max.Y
 }
 
-// CheckInputData function is responsible for check if all images have the same size
-func CheckInputData(images []image.Image) error {
+// CheckImagesSizes function is used to check if all images have the same size.
+func CheckImagesSizes(images []image.Image) error {
 	// Check if the slice is empty
 	if len(images) == 0 {
-		return errors.New("Empty slice")
+		return errors.New("The slice has no images")
 	}
 	// Check if the first image is nil
 	if images[0] == nil {
-		return errors.New("One or more images are nil")
+		return errors.New("At least one image is nil")
 	}
+
 	// Get the image size from the first image
-	width, height := GetSize(images[0])
+	defaultWidth, defaultHeight := GetSize(images[0])
 
 	// Check if the size is valid
-	if width <= 0 && height <= 0 {
-		return errors.New("Invalid image sizes")
+	if defaultWidth <= 0 || defaultHeight <= 0 {
+		return errors.New("Invalid image size")
 	}
 
-	// Verifies each image
+	// Check each image in the slice
 	for index := 0; index < len(images); index++ {
 		// Check if the current image is nil
 		if images[index] == nil {
-			return errors.New("One or more images are nil")
+			return errors.New("At least one image is nil")
 		}
 
 		// Get the size from the current image
-		w, h := GetSize(images[index])
+		width, height := GetSize(images[index])
 
 		// Check if all images have the same size
-		if w != width || h != height {
+		if width != defaultWidth || height != defaultHeight {
 			return errors.New("One or more images have different sizes")
 		}
 	}
+	// No error has occurred, return nil
 	return nil
 }
 
-// GetBinary function return 1 (string) if the value is equal or higher than the
-// threshold or 0 (string) otherwise
-func GetBinary(value, threshold uint8) string {
+// GetBinaryString function used to get a binary value as a string based on a threshold.
+// Return "1" if the value is equal or higher than the threshold or "0" otherwise.
+func GetBinaryString(value, threshold uint8) string {
 	if value >= threshold {
 		return "1"
 	} else {
@@ -84,7 +91,7 @@ func GetBinary(value, threshold uint8) string {
 	}
 }
 
-// GetPixels function returns a 'matrix' containing all pixels from the image passed by parameter
+// GetPixels function returns a 'matrix' ([][]uint8) containing all pixels from the image passed by parameter.
 func GetPixels(img image.Image) [][]uint8 {
 	var pixels [][]uint8
 	
@@ -94,19 +101,26 @@ func GetPixels(img image.Image) [][]uint8 {
 	}
 
 	// Get the image size
-	w, h := GetSize(img)
+	width, height := GetSize(img)
 
-	for x := 0; x < w; x++ {
+	// For each pixel in the image (x, y) convert it to grayscale and store it in the 'matrix'
+	for x := 0; x < width; x++ {
 		var row []uint8
-		for y := 0; y < h; y++ {
+		for y := 0; y < height; y++ {
+			// Get the RGB from the current pixel
 			r, g, b, _ := img.At(x, y).RGBA()
+
 			// Convert the RGB to Grayscale (red*30% + green*59% + blue*11%)
-			pixel := (float32(r)*0.299)+(float32(g)*0.587)+(float32(b)*0.114)
-			// Convert to uint8 (0-255) and append to the slice
+			// https://en.wikipedia.org/wiki/Grayscale#Luma_coding_in_video_systems
+			pixel := (float32(r) * 0.299) + (float32(g) * 0.587) + (float32(b) * 0.114)
+
+			// Convert the pixel from uin64 to uint8 (0-255) and append it to the slice
 			row = append(row, uint8(pixel))
 		}
-		// Append the slice to the pixels
+		// Append the row (slice) to the pixels 'matrix'
 		pixels = append(pixels, row)
 	}
+
+	// Return all pixels
 	return pixels
 }

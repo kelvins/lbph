@@ -71,7 +71,7 @@ func TestCheckInputData(t *testing.T) {
 		images = append(images, img)
 	}
 
-	err := CheckInputData(images)
+	err := CheckImagesSizes(images)
 	if err == nil {
 		t.Error("Expected: Images have different sizes. Received: nil")
 	}
@@ -82,7 +82,7 @@ func TestCheckInputData(t *testing.T) {
 	img, _ := LoadImage("../dataset/test/1.png")
 	images = append(images, img)
 
-	err = CheckInputData(images)
+	err = CheckImagesSizes(images)
 	if err != nil {
 		t.Error("Expected: nil. Received: ", err)
 	}
@@ -102,7 +102,7 @@ func TestGetBinary(t *testing.T) {
 
 	// Test with all values in the table
 	for _, pair := range tTable {
-		result := GetBinary(pair.value, pair.threshold)
+		result := GetBinaryString(pair.value, pair.threshold)
 		if result != pair.result {
 			t.Error(
 				"Expected: ", pair.result,
