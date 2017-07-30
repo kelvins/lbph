@@ -10,15 +10,29 @@ import (
 
 	"github.com/kelvins/lbph/common"
 	"github.com/kelvins/lbph/histogram"
-	"github.com/kelvins/lbph/structs"
 )
+
+// Structure used to pass the LBPH parameters
+type Parameters struct {
+	Radius    uint8
+	Neighbors uint8
+	GridX     uint8
+	GridY     uint8
+}
+
+// Store the input data (images and labels) and the calculated histogram
+type TrainDataStruct struct {
+	Images     []image.Image
+	Labels     []string
+	Histograms [][]uint8
+}
 
 var (
 	// Struct that stores the Data loaded by the user
-	Data structs.Data
+	TrainData TrainDataStruct
 
 	// LBPH parameters
-	lbphParameters = structs.LBPHParameters{
+	lbphParameters = Parameters{
 		Radius:    1,
 		Neighbors: 8,
 		GridX:     8,
@@ -26,7 +40,7 @@ var (
 	}
 )
 
-func Init(parameters structs.LBPHParameters) {
+func Init(parameters Parameters) {
 
 	if parameters.Radius <= 0 {
 		parameters.Radius = 1
@@ -50,7 +64,7 @@ func Init(parameters structs.LBPHParameters) {
 // Train function is used to train the LBPH algorithm
 func Train(images []image.Image, labels []string) error {
 	// Clear the data structure
-	Data = structs.Data{}
+	TrainData = TrainDataStruct{}
 
 	// Check if the images and labels slices have the same size
 	if len(images) != len(labels) {
@@ -66,7 +80,7 @@ func Train(images []image.Image, labels []string) error {
 
 	// Call the CheckInputData from the common package
 	// It will check if all images have the same size
-	err := common.CheckInputData(images)
+	err := common.CheckImagesSizes(images)
 	if err != nil {
 		return err
 	}
@@ -83,7 +97,7 @@ func Train(images []image.Image, labels []string) error {
 	}
 
 	// Store the current data that we are working on
-	Data = structs.Data{
+	TrainData = TrainDataStruct{
 		Images:     images,
 		Labels:     labels,
 		Histograms: histograms,
@@ -102,7 +116,7 @@ func Predict(img image.Image) (string, float64, error) {
 
 	// If we don't have histograms to compare, probably the Train function was
 	// not called or has occurred an error and it was not correctly treated
-	if len(Data.Histograms) == 0 {
+	if len(TrainData.Histograms) == 0 {
 		return "", 0.0, errors.New("Could not get the image histogram")
 	}
 
@@ -113,11 +127,11 @@ func Predict(img image.Image) (string, float64, error) {
 	}
 
 	// Search for the closest histogram based on the histograms calculated in the Train function
-	minValue := histogram.CalcHistogramDist(hist, Data.Histograms[0])
+	minValue := histogram.CalcHistogramDist(hist, TrainData.Histograms[0])
 	minIndex := 0
-	for index := 1; index < len(Data.Histograms); index++ {
+	for index := 1; index < len(TrainData.Histograms); index++ {
 		// Calculate the distance from the current histogram
-		dist := histogram.CalcHistogramDist(hist, Data.Histograms[index])
+		dist := histogram.CalcHistogramDist(hist, TrainData.Histograms[index])
 		// If it is closer, save the minValue and the index
 		if dist < minValue {
 			minValue = dist
@@ -127,5 +141,5 @@ func Predict(img image.Image) (string, float64, error) {
 
 	// Return the label corresponding to the closest histogram,
 	// the distance (minValue) and the error (nil)
-	return Data.Labels[minIndex], minValue, nil
+	return TrainData.Labels[minIndex], minValue, nil
 }
