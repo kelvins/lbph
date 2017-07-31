@@ -81,7 +81,7 @@ func GetTrainData() TrainDataStruct {
 	return *trainData
 }
 
-// Train function is used to train the LBPH algorithm
+// Train function is used to train the LBPH algorithm based on the images and labels passed by parameter.
 func Train(images []image.Image, labels []string) error {
 	// Clear the data structure
 	trainData = nil
@@ -114,10 +114,14 @@ func Train(images []image.Image, labels []string) error {
 		if err != nil {
 			return err
 		}
+
+		// Get the histogram from the current image
 		hist, err := histogram.GetHistogram(pixels, lbphParameters.GridX, lbphParameters.GridY)
 		if err != nil {
 			return err
 		}
+
+		// Store the histogram in the 'matrix'
 		histograms = append(histograms, hist)
 	}
 
@@ -142,13 +146,13 @@ func Predict(img image.Image) (string, float64, error) {
 
 	// Check if the image passed by parameter is nil
 	if img == nil {
-		return "", 0.0, errors.New("Image is nil")
+		return "", 0.0, errors.New("The image passed by parameter is nil")
 	}
 
 	// If we don't have histograms to compare, probably the Train function was
 	// not called or has occurred an error and it was not correctly treated
 	if len(trainData.Histograms) == 0 {
-		return "", 0.0, errors.New("Could not get the image histogram")
+		return "", 0.0, errors.New("There is no histograms in the trainData")
 	}
 
 	// Calculate the LBP operation
@@ -156,6 +160,7 @@ func Predict(img image.Image) (string, float64, error) {
 	if err != nil {
 		return "", 0.0, err
 	}
+
 	// Calculate the histogram for the current image
 	hist, err := histogram.GetHistogram(pixels, lbphParameters.GridX, lbphParameters.GridY)
 	if err != nil {
@@ -167,6 +172,7 @@ func Predict(img image.Image) (string, float64, error) {
 	if err != nil {
 		return "", 0.0, err
 	}
+
 	minIndex := 0
 	for index := 1; index < len(trainData.Histograms); index++ {
 		// Calculate the distance from the current histogram
