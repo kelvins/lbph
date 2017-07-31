@@ -1,14 +1,18 @@
 language: go
 sudo: false
+
 go:
   - 1.8.x
   - tip
 
-before_install:
-  - go get -t -v ./...
+install:
+  - go get -t ./...
+  - go get code.google.com/p/go.tools/cmd/cover
+  - go get github.com/mattn/goveralls
 
 script:
-  - ./go.test.sh
+  - PATH="$HOME/gopath/bin:$PATH"
+  - script/coverage.sh --coveralls
 
 after_success:
   - bash <(curl -s https://codecov.io/bash) -t f37b80a1-169f-4e73-b7f7-6d636d58a42e
