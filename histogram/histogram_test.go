@@ -65,6 +65,28 @@ func TestGetHistogram(t *testing.T) {
 	if !equalSlices(hist, expectedHist) {
 		t.Error("The histograms are different")
 	}
+
+	expectedHist = make([]uint8, 1024)
+	expectedHist[0] = 6
+	expectedHist[255] = 3
+	expectedHist[256] = 6
+	expectedHist[511] = 3
+	expectedHist[512] = 6
+	expectedHist[767] = 3
+	expectedHist[768] = 6
+	expectedHist[1023] = 3
+
+	hist, err = GetHistogram(pixels, 2, 2)
+
+	if err != nil {
+		t.Error(
+			"Expected no errors.",
+			"Received error:", err,
+		)
+	}
+	if !equalSlices(hist, expectedHist) {
+		t.Error("The histograms are different")
+	}
 }
 
 func TestCalcHistogramDist(t *testing.T) {
