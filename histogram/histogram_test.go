@@ -2,38 +2,18 @@ package histogram
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
-
-var EPSILON float64 = 0.00000001
-func floatEquals(a, b float64) bool {
-	if (a - b) < EPSILON && (b - a) < EPSILON {
-		return true
-	}
-	return false
-}
-
-func equalSlices(slice1, slice2 []uint8) bool {
-	if len(slice1) != len(slice2) {
-		return false
-	}
-	for index := 0; index < len(slice1); index++ {
-		if slice1[index] != slice2[index] {
-			return false
-		}
-	}
-	return true
-}
 
 func TestGetHistogram(t *testing.T) {
 	var pixels [][]uint8
 
 	_, err := GetHistogram(pixels, 1, 1)
-	if err == nil {
-		t.Error("Expected an error.")
-	}
+	assert.NotNil(t, err)
 
-	row1 := []uint8{255,255,255,255,255,255}
-	row2 := []uint8{0,0,0,0,0,0}
+	row1 := []uint8{255, 255, 255, 255, 255, 255}
+	row2 := []uint8{0, 0, 0, 0, 0, 0}
 	pixels = append(pixels, row1)
 	pixels = append(pixels, row2)
 	pixels = append(pixels, row2)
@@ -42,29 +22,18 @@ func TestGetHistogram(t *testing.T) {
 	pixels = append(pixels, row1)
 
 	_, err = GetHistogram(pixels, 0, 1)
-	if err == nil {
-		t.Error("Expected an error.")
-	}
+	assert.NotNil(t, err)
 
 	_, err = GetHistogram(pixels, 1, 0)
-	if err == nil {
-		t.Error("Expected an error.")
-	}
+	assert.NotNil(t, err)
 
 	expectedHist := make([]uint8, 256)
 	expectedHist[0] = 24
 	expectedHist[255] = 12
 
 	hist, err := GetHistogram(pixels, 1, 1)
-	if err != nil {
-		t.Error(
-			"Expected no errors.",
-			"Received error:", err,
-		)
-	}
-	if !equalSlices(hist, expectedHist) {
-		t.Error("The histograms are different")
-	}
+	assert.Nil(t, err)
+	assert.Equal(t, hist, expectedHist, "The histograms should be equal")
 
 	expectedHist = make([]uint8, 1024)
 	expectedHist[0] = 6
@@ -77,16 +46,8 @@ func TestGetHistogram(t *testing.T) {
 	expectedHist[1023] = 3
 
 	hist, err = GetHistogram(pixels, 2, 2)
-
-	if err != nil {
-		t.Error(
-			"Expected no errors.",
-			"Received error:", err,
-		)
-	}
-	if !equalSlices(hist, expectedHist) {
-		t.Error("The histograms are different")
-	}
+	assert.Nil(t, err)
+	assert.Equal(t, hist, expectedHist, "The histograms should be equal")
 }
 
 func TestCalcHistogramDist(t *testing.T) {
@@ -100,12 +61,7 @@ func TestCalcHistogramDist(t *testing.T) {
 	}
 
 	dist, _ := CalcHistogramDist(hist1, hist2)
-	if !floatEquals(dist, 0.0) {
-		t.Error(
-			"Expected distance:", 0.0,
-			"Received distance:", dist,
-		)
-	}
+	assert.Equal(t, dist, 0.0, "The distance should be 0")
 
 	hist1 = nil
 	hist2 = nil
@@ -116,10 +72,5 @@ func TestCalcHistogramDist(t *testing.T) {
 	}
 
 	dist, _ = CalcHistogramDist(hist1, hist2)
-	if !floatEquals(dist, 10.0) {
-		t.Error(
-			"Expected distance:", 10.0,
-			"Received distance:", dist,
-		)
-	}
+	assert.Equal(t, dist, 10.0, "The distance should be equal to 10")
 }
