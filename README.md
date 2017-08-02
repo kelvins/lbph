@@ -49,14 +49,35 @@ Usage example:
 package main
 
 import (
+	"image"
 	"fmt"
+	"os"
 
 	"github.com/kelvins/lbph"
+	"github.com/kelvins/lbph/common"
 )
 
 func main() {
 
-	parameters = lbph.Parameters{
+	var paths []string
+	paths = append(paths, "./dataset/train/1.png")
+	paths = append(paths, "./dataset/train/2.png")
+	paths = append(paths, "./dataset/train/3.png")
+
+	var labels []string
+	labels = append(labels, "rocks")
+	labels = append(labels, "grass")
+	labels = append(labels, "wood")
+
+	var images []image.Image
+
+	for index := 0; index < len(paths); index++ {
+		img, err := common.LoadImage(paths[index])
+		checkError(err)
+		images = append(images, img)
+	}
+
+	parameters := lbph.Parameters{
 		Radius:    1,
 		Neighbors: 8,
 		GridX:     8,
@@ -65,7 +86,39 @@ func main() {
 
 	lbph.Init(parameters)
 
-	fmt.Println("")
+	err := lbph.Train(images, labels)
+	checkError(err)
+
+	paths = nil
+	paths = append(paths, "./dataset/test/1.png")
+	paths = append(paths, "./dataset/test/2.png")
+	paths = append(paths, "./dataset/test/3.png")
+
+	var expectedLabels []string
+	expectedLabels = append(expectedLabels, "wood")
+	expectedLabels = append(expectedLabels, "rocks")
+	expectedLabels = append(expectedLabels, "grass")
+
+	for index := 0; index < len(paths); index++ {
+		img, err := common.LoadImage(paths[index])
+		checkError(err)
+		label, distance, err := lbph.Predict(img)
+		checkError(err)
+		if label == expectedLabels[index] {
+			fmt.Println("Image correctly predicted")
+		} else {
+			fmt.Println("Image wrongly predicted")
+		}
+		fmt.Printf("Predicted as %s expected %s\n", label, expectedLabels[index])
+		fmt.Printf("Distance: %f\n\n", distance)
+	}
+}
+
+func checkError(err error) {
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+		os.Exit(1)
+	}
 }
 
 
