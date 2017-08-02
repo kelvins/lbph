@@ -18,13 +18,13 @@ func ApplyLBP(img image.Image, radius, neighbors uint8) ([][]uint8, error) {
 	var lbpPixels [][]uint8
 	// Check the parameters
 	if img == nil {
-		return lbpPixels, errors.New("Invalid image")
+		return lbpPixels, errors.New("The image passed to the ApplyLBP function is nil")
 	}
 	if radius <= 0 {
-		return lbpPixels, errors.New("Invalid radius parameter")
+		return lbpPixels, errors.New("Invalid radius parameter passed to the ApplyLBP function")
 	}
 	if neighbors <= 0 {
-		return lbpPixels, errors.New("Invalid neighbors parameter")
+		return lbpPixels, errors.New("Invalid neighbors parameter passed to the ApplyLBP function")
 	}
 
 	// Get the pixels 'matrix' ([][]uint8)
@@ -55,7 +55,7 @@ func ApplyLBP(img image.Image, radius, neighbors uint8) ([][]uint8, error) {
 			// Convert the binary string to a decimal integer
 			dec, err := strconv.ParseUint(binaryResult, 2, 8)
 			if err != nil {
-				return lbpPixels, errors.New("Error applying the LBP operation")
+				return lbpPixels, errors.New("Error converting binary to uint in the ApplyLBP function")
 			} else {
 				// Append the decimal do the result slice
 				// ParseUint returns a uint64 so we need to convert it to uint8

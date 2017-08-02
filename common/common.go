@@ -7,6 +7,8 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"os"
+
+	"github.com/pkg/errors"
 )
 
 // LoadImage function is used to provide an easy way to load an image file.
@@ -15,7 +17,7 @@ func LoadImage(filePath string) (image.Image, error) {
 	fImage, err := os.Open(filePath)
 	// Check if no error has occurred
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Failed to open an image file")
 	}
 
 	// Ensure that the image file will be closed
@@ -25,7 +27,7 @@ func LoadImage(filePath string) (image.Image, error) {
 	img, _, err := image.Decode(fImage)
 	// Check if no error has occurred
 	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "Failed decoding the image file")
 	}
 
 	return img, nil
@@ -47,26 +49,28 @@ func GetSize(img image.Image) (int, int) {
 func CheckImagesSizes(images []image.Image) error {
 	// Check if the slice is empty
 	if len(images) == 0 {
-		return errors.New("The slice has no images")
+		return errors.New("The images slice is empty")
 	}
 	// Check if the first image is nil
 	if images[0] == nil {
-		return errors.New("At least one image is nil")
+		return errors.New("At least one image in the slice is nil")
 	}
 
 	// Get the image size from the first image
 	defaultWidth, defaultHeight := GetSize(images[0])
 
 	// Check if the size is valid
+	// This condition should never happen because
+	// we already tested if the image was nil
 	if defaultWidth <= 0 || defaultHeight <= 0 {
-		return errors.New("Invalid image size")
+		return errors.New("At least one image have an invalid size")
 	}
 
 	// Check each image in the slice
 	for index := 0; index < len(images); index++ {
 		// Check if the current image is nil
 		if images[index] == nil {
-			return errors.New("At least one image is nil")
+			return errors.New("At least one image in the slice is nil")
 		}
 
 		// Get the size from the current image
@@ -94,7 +98,7 @@ func GetBinaryString(value, threshold uint8) string {
 // GetPixels function returns a 'matrix' ([][]uint8) containing all pixels from the image passed by parameter.
 func GetPixels(img image.Image) [][]uint8 {
 	var pixels [][]uint8
-	
+
 	// Check if the image is nil
 	if img == nil {
 		return pixels

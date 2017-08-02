@@ -11,7 +11,7 @@ func GetHistogram(pixels [][]uint8, gridX, gridY uint8) ([]uint8, error) {
 
 	// Check the pixels 'matrix'
 	if len(pixels) == 0 {
-		return hist, errors.New("The pixels slice is empty")
+		return hist, errors.New("The pixels slice passed to the GetHistogram function is empty")
 	}
 
 	// Get the 'matrix' dimensions
@@ -20,10 +20,10 @@ func GetHistogram(pixels [][]uint8, gridX, gridY uint8) ([]uint8, error) {
 
 	// Check the grid (X and Y)
 	if gridX <= 0 || int(gridX) >= cols {
-		return hist, errors.New("Invalid grid X")
+		return hist, errors.New("Invalid grid X passed to the GetHistogram function")
 	}
 	if gridY <= 0 || int(gridX) >= rows {
-		return hist, errors.New("Invalid grid Y")
+		return hist, errors.New("Invalid grid Y passed to the GetHistogram function")
 	}
 
 	// Get the size (width and height) of each region
@@ -80,7 +80,7 @@ func CalcHistogramDist(hist1, hist2 []uint8) (float64, error) {
 // Calculate the euclidean distance between two variables: sum = sqrt((h1(i)-h2(i))^2)
 func euclideanDistance(variable1, variable2 []uint8) (float64, error) {
 	if len(variable1) != len(variable2) {
-		return 0, errors.New("Variables with different sizes")
+		return 0, errors.New("Could not calculate the euclidean distance. The slices have different sizes")
 	}
 	var sum float64
 	for index := 0; index < len(variable1); index++ {

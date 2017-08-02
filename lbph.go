@@ -86,16 +86,14 @@ func Train(images []image.Image, labels []string) error {
 	// Clear the data structure
 	trainData = nil
 
-	// Check if the images and labels slices have the same size
-	if len(images) != len(labels) {
-		return errors.New("Slices have different sizes")
+	// Check if the slices are not empty
+	if len(images) == 0 || len(labels) == 0 {
+		return errors.New("At least one of the slices is empty")
 	}
 
-	// Check if the images slice is not empty
-	// As we already checked if the slices have the same size we
-	// don't need to check if the labels slice is empty
-	if len(images) == 0 {
-		return errors.New("Empty vector")
+	// Check if the images and labels slices have the same size
+	if len(images) != len(labels) {
+		return errors.New("The slices have different sizes")
 	}
 
 	// Call the CheckInputData from the common package
@@ -152,7 +150,7 @@ func Predict(img image.Image) (string, float64, error) {
 	// If we don't have histograms to compare, probably the Train function was
 	// not called or has occurred an error and it was not correctly treated
 	if len(trainData.Histograms) == 0 {
-		return "", 0.0, errors.New("There is no histograms in the trainData")
+		return "", 0.0, errors.New("There are no histograms in the trainData")
 	}
 
 	// Calculate the LBP operation
@@ -164,7 +162,7 @@ func Predict(img image.Image) (string, float64, error) {
 	// Calculate the histogram for the current image
 	hist, err := histogram.GetHistogram(pixels, lbphParameters.GridX, lbphParameters.GridY)
 	if err != nil {
-		return "", 0.0, errors.New("Could not get the image histogram")
+		return "", 0.0, err
 	}
 
 	// Search for the closest histogram based on the histograms calculated in the Train function
