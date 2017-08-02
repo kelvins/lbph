@@ -1,9 +1,11 @@
 package common
 
 import (
+	"errors"
 	"image"
 	"testing"
-	"errors"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestLoadImage(t *testing.T) {
@@ -19,19 +21,11 @@ func TestLoadImage(t *testing.T) {
 	for _, pair := range tTable {
 		img, err := LoadImage(pair.path)
 		if pair.err == nil {
-			if err != nil {
-				t.Error("Expected no errors")
-			}
-			if img == nil {
-				t.Error("Expected a valid img")
-			}
+			assert.Nil(t, err)
+			assert.NotNil(t, img)
 		} else {
-			if err == nil {
-				t.Error("Expected an erro. The file does not exist")
-			}
-			if img != nil {
-				t.Error("Expected a nil img")
-			}
+			assert.Error(t, err)
+			assert.Nil(t, img)
 		}
 	}
 }
@@ -54,18 +48,8 @@ func TestGetSize(t *testing.T) {
 	for _, pair := range tTable {
 		img, _ := LoadImage(pair.path)
 		width, height := GetSize(img)
-		if width != pair.width {
-			t.Error(
-				"Expected: ", pair.width,
-				"Received: ", width,
-			)
-		}
-		if height != pair.height {
-			t.Error(
-				"Expected: ", pair.height,
-				"Received: ", height,
-			)
-		}
+		assert.Equal(t, width, pair.width, "The width should be equal")
+		assert.Equal(t, height, pair.height, "The height should be equal")
 	}
 }
 
@@ -83,9 +67,7 @@ func TestCheckImagesSizes(t *testing.T) {
 	}
 
 	err := CheckImagesSizes(images)
-	if err == nil {
-		t.Error("Expected: Images have different sizes. Received: nil")
-	}
+	assert.NotNil(t, err)
 
 	images = nil
 
@@ -96,9 +78,7 @@ func TestCheckImagesSizes(t *testing.T) {
 	images = append(images, img)
 
 	err = CheckImagesSizes(images)
-	if err != nil {
-		t.Error("Expected: nil. Received: ", err)
-	}
+	assert.Nil(t, err)
 }
 
 func TestGetBinary(t *testing.T) {
@@ -116,12 +96,7 @@ func TestGetBinary(t *testing.T) {
 	// Test with all values in the table
 	for _, pair := range tTable {
 		result := GetBinaryString(pair.value, pair.threshold)
-		if result != pair.result {
-			t.Error(
-				"Expected: ", pair.result,
-				"Received: ", result,
-			)
-		}
+		assert.Equal(t, result, pair.result, "The result should be equal")
 	}
 }
 
@@ -133,25 +108,19 @@ func TestGetPixels(t *testing.T) {
 	pixels := GetPixels(img)
 
 	var expectedPixels [][]uint8
-	expectedPixels = append(expectedPixels, []uint8{  0, 255,   0, 255,   0, 255})
-	expectedPixels = append(expectedPixels, []uint8{255, 255, 255, 255, 255,   0})
-	expectedPixels = append(expectedPixels, []uint8{  0, 255, 255,   0, 255, 255})
-	expectedPixels = append(expectedPixels, []uint8{255, 255,   0, 255, 255,   0})
-	expectedPixels = append(expectedPixels, []uint8{  0, 255, 255, 255, 255, 255})
-	expectedPixels = append(expectedPixels, []uint8{255,   0, 255,   0, 255,   0})
+	expectedPixels = append(expectedPixels, []uint8{0, 255, 0, 255, 0, 255})
+	expectedPixels = append(expectedPixels, []uint8{255, 255, 255, 255, 255, 0})
+	expectedPixels = append(expectedPixels, []uint8{0, 255, 255, 0, 255, 255})
+	expectedPixels = append(expectedPixels, []uint8{255, 255, 0, 255, 255, 0})
+	expectedPixels = append(expectedPixels, []uint8{0, 255, 255, 255, 255, 255})
+	expectedPixels = append(expectedPixels, []uint8{255, 0, 255, 0, 255, 0})
 
-	if len(pixels) == len(expectedPixels) {
-		for row := 0; row < len(pixels); row++ {
-			for col := 0; col < len(pixels[0]); col++ {
-				if pixels[row][col] != expectedPixels[row][col] {
-					t.Error(
-						"Expected value : ", expectedPixels[row][col],
-						"Received value : ", pixels[row][col],
-					)
-				}
-			}
+	assert.Equal(t, len(pixels), len(expectedPixels), "The length of the slices should be equal")
+	assert.Equal(t, len(pixels[0]), len(expectedPixels[0]), "The length of the slices should be equal")
+
+	for row := 0; row < len(pixels); row++ {
+		for col := 0; col < len(pixels[0]); col++ {
+			assert.Equal(t, pixels[row][col], expectedPixels[row][col], "The pixel value should be equal")
 		}
-	} else {
-		t.Error("Slices have different sizes")
 	}
 }
