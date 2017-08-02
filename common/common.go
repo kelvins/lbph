@@ -1,7 +1,6 @@
 package common
 
 import (
-	"errors"
 	"image"
 	_ "image/gif"
 	_ "image/jpeg"
