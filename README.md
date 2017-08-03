@@ -29,20 +29,21 @@ As LBP is a visual descriptor it can also be used for face recognition tasks, as
 
 In this section, it is shown a step-by-step explanation of the LBPH algorithm:
 
-1. First of all, we need to train the algorithm. To do that we just need to call the `Train` function passing a slice of images and a slice of labels.
-2. The `Train` function will check if all images are in grayscale and have the same size.
-3. Then, the `Train` function will apply the basic LBP operation by changing each pixel based on its `8` neighbors using a default radius of `1`. The basic LBP operation can be seen in the following image:
+1. First of all, we need to define the parameters (`radius`, `neighbors`, `grid x` and `grid y`) using the `Parameters` structure from the `lbph` package. Then we need to call the `Init` function passing the structure with the parameters. If we not set the parameters, it will use the default parameters as explained in the [Parameters](#parameters) section.
+2. Secondly, we need to train the algorithm. To do that we just need to call the `Train` function passing a slice of images and a slice of labels. All images must have the same size. The labels are used as IDs for the subjects of the images, so if you have more than one image of the same subject, the labels should be the same.
+3. The `Train` function will first check if all images have the same size. If at least one image has not the same size, the `Train` function will return an error and the algorithm will not be trained.
+4. Then, the `Train` function will apply the basic LBP operation by changing each pixel based on its neighbors using a default radius defined by the user. The basic LBP operation can be seen in the following image (using `8` neighbors and radius equal to `1`):
 
 ![LBP operation](http://i.imgur.com/G4PqJPe.png)
 
-4. After applying the LBP operation we extract the histograms of the grayscale image based on the number of grids (X and Y) passed by parameter. After extracting the histogram of each region, we concatenate all histograms and create a new one that will be used to represent the image.
+5. After applying the LBP operation we extract the histograms of each image based on the number of grids (X and Y) passed by parameter. After extracting the histogram of each region, we concatenate all histograms and create a new one that will be used to represent the image.
 
 ![Histograms](http://i.imgur.com/3BGk130.png)
 
-5. The images, labels, and histograms are stored in a data structure so we can compare all of it to a new image in the `Predict` function.
-6. Now, the algorithm is already trained and we can Predict a new image.
-7. To predict a new image we just need to call the `Predict` function passing the image as parameter. The `Predict` function will extract the histogram from the new image and will return the label and distance corresponding to the closest histogram if no error has occurred (e.g. the image is not in grayscale, or image does not have the same size).
-8. It uses the normalized euclidean distance to calculate the similarity of the histograms. We can assume that the distance returned by the `Predict` function is the confidence and assume that the algorithm result is correct based on this confidence. The closer to zero is the distance, the greater is the confidence.
+6. The images, labels, and histograms are stored in a data structure so we can compare all of it to a new image in the `Predict` function.
+7. Now, the algorithm is already trained and we can Predict a new image.
+8. To predict a new image we just need to call the `Predict` function passing the image as parameter. The `Predict` function will extract the histogram from the new image and will return the label and distance corresponding to the closest histogram if no error has occurred.
+9. It uses the [euclidean distance](#important-notes) to calculate the similarity of the histograms. The closer to zero is the distance, the greater is the confidence.
 
 ### Important Notes
 
@@ -50,13 +51,13 @@ In this section, it is shown a step-by-step explanation of the LBPH algorithm:
 
 ![Euclidean Distance](http://i.imgur.com/liBbl6u.gif)
 
-- The current LBPH implementation uses a fixed `radius` of `1` and a fixed number of `neighbors` equal to `8`. In the future, we intend to provide an option to the user set these values as parameters.
+- The current LBPH implementation uses a fixed `radius` of `1` and a fixed number of `neighbors` equal to `8`. We need to implement the usage of these parameters (feel free to contribute here).
 
 ## I/O
 
 ### Input
 
-All input images (for train and test) must have the same size. Different of OpenCV, the images don't need to be in grayscale, because each pixel is automatically converted to grayscale in the LBP process using the following [formula](https://en.wikipedia.org/wiki/Grayscale#Luma_coding_in_video_systems):
+All input images (for training and testing) must have the same size. Different of OpenCV, the images don't need to be in grayscale, because each pixel is automatically converted to grayscale in the [GetPixels](https://github.com/kelvins/lbph/blob/master/common/common.go#L118) function using the following [formula](https://en.wikipedia.org/wiki/Grayscale#Luma_coding_in_video_systems):
 
 ```
 Y = (0.299 * RED) + (0.587 * GREEN) + (0.114 * BLUE)
@@ -67,7 +68,7 @@ Y = (0.299 * RED) + (0.587 * GREEN) + (0.114 * BLUE)
 The Predict function returns 3 values:
 
 * **label**: The label corresponding to the predicted image.
-* **distance**: The distance between the histograms from the input test image and the matched image.
+* **distance**: The distance between the histograms from the input test image and the matched image (from the training set).
 * **err**: Some error that has occurred in the Predict step. If no error occurs it will returns nil.
 
 Using the label you can check if the algorithm has correctly predicted the image. In a real world application, it is not feasible to manually verify all images, so we can use the distance to infer if the algorithm has predicted correctly or not.
