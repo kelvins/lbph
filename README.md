@@ -49,33 +49,45 @@ Usage example:
 package main
 
 import (
-	"image"
-	"fmt"
 	"os"
+	"fmt"
+	"image"
 
 	"github.com/kelvins/lbph"
 	"github.com/kelvins/lbph/common"
 )
 
+var trainImagesPaths []string
+var trainLabels []string
+var trainImages []image.Image
+
+var testImagesPaths []string
+var testLabels []string
+var testImages []image.Image
+
+func init() {
+	trainImagesPaths = append(trainImagesPaths, "./dataset/train/1.png")
+	trainImagesPaths = append(trainImagesPaths, "./dataset/train/2.png")
+	trainImagesPaths = append(trainImagesPaths, "./dataset/train/3.png")
+
+	trainLabels = append(trainLabels, "rocks")
+	trainLabels = append(trainLabels, "grass")
+	trainLabels = append(trainLabels, "wood")
+
+	trainImages = loadImages(trainImagesPaths)
+
+	testImagesPaths = append(testImagesPaths, "./dataset/test/1.png")
+	testImagesPaths = append(testImagesPaths, "./dataset/test/2.png")
+	testImagesPaths = append(testImagesPaths, "./dataset/test/3.png")
+
+	testLabels = append(testLabels, "wood")
+	testLabels = append(testLabels, "rocks")
+	testLabels = append(testLabels, "grass")
+
+	testImages = loadImages(testImagesPaths)
+}
+
 func main() {
-
-	var paths []string
-	paths = append(paths, "./dataset/train/1.png")
-	paths = append(paths, "./dataset/train/2.png")
-	paths = append(paths, "./dataset/train/3.png")
-
-	var labels []string
-	labels = append(labels, "rocks")
-	labels = append(labels, "grass")
-	labels = append(labels, "wood")
-
-	var images []image.Image
-
-	for index := 0; index < len(paths); index++ {
-		img, err := common.LoadImage(paths[index])
-		checkError(err)
-		images = append(images, img)
-	}
 
 	parameters := lbph.Parameters{
 		Radius:    1,
@@ -86,32 +98,34 @@ func main() {
 
 	lbph.Init(parameters)
 
-	err := lbph.Train(images, labels)
+	err := lbph.Train(trainImages, trainLabels)
 	checkError(err)
 
-	paths = nil
-	paths = append(paths, "./dataset/test/1.png")
-	paths = append(paths, "./dataset/test/2.png")
-	paths = append(paths, "./dataset/test/3.png")
-
-	var expectedLabels []string
-	expectedLabels = append(expectedLabels, "wood")
-	expectedLabels = append(expectedLabels, "rocks")
-	expectedLabels = append(expectedLabels, "grass")
-
-	for index := 0; index < len(paths); index++ {
-		img, err := common.LoadImage(paths[index])
+	for index := 0; index < len(testImages); index++ {
+		label, distance, err := lbph.Predict(testImages[index])
 		checkError(err)
-		label, distance, err := lbph.Predict(img)
-		checkError(err)
-		if label == expectedLabels[index] {
+
+		if label == testLabels[index] {
 			fmt.Println("Image correctly predicted")
 		} else {
 			fmt.Println("Image wrongly predicted")
 		}
-		fmt.Printf("Predicted as %s expected %s\n", label, expectedLabels[index])
+
+		fmt.Printf("Predicted as %s expected %s\n", label, testLabels[index])
 		fmt.Printf("Distance: %f\n\n", distance)
 	}
+}
+
+func loadImages(paths []string) []image.Image {
+	var images []image.Image
+
+	for index := 0; index < len(paths); index++ {
+		img, err := common.LoadImage(paths[index])
+		checkError(err)
+		images = append(images, img)
+	}
+
+	return images
 }
 
 func checkError(err error) {
@@ -120,7 +134,6 @@ func checkError(err error) {
 		os.Exit(1)
 	}
 }
-
 
 ```
 
