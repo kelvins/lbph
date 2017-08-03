@@ -6,17 +6,29 @@
 # Summary
 
 1. [Introduction](#introduction)
+
 2. [Step-by-Step](#step-by-step)
+
 2.1. [Important Notes](#important-notes)
-3. [I/O](#i/o)
+
+3. [I/O](#io)
+
 3.1. [Input](#input)
+
 3.2. [Output](#output)
+
 4. [Usage](#usage)
+
 4.1. [Installation](#installation)
+
 4.2. [Usage Example](#usage-example)
+
 4.3. [Parameters](#parameters)
+
 5. [References](#references)
+
 6. [How to contribute](#how-to-contribute)
+
 6.1. [Contributing](#contributing)
 
 ## Introduction
