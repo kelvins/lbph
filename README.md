@@ -3,6 +3,24 @@
 [![GoDoc](https://godoc.org/github.com/kelvins/lbph?status.svg)](https://godoc.org/github.com/kelvins/lbph)
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](LICENSE)
 
+# Summary
+
+1. [Introduction](#introduction)
+2. [Step-by-Step](#step-by-step)
+2.1. [Important Notes](#important-notes)
+3. [I/O](#i/o)
+3.1. [Input](#input)
+3.2. [Output](#output)
+4. [Usage](#usage)
+4.1. [Installation](#installation)
+4.2. [Usage Example](#usage-example)
+4.3. [Parameters](#parameters)
+5. [References](#references)
+6. [How to contribute](#how-to-contribute)
+6.1. [Contributing](#contributing)
+
+## Introduction
+
 Local Binary Patterns (LBP) is a type of visual descriptor used for classification in computer vision. LBP was first described in 1994 and has since been found to be a powerful feature for texture classification. It has further been determined that when LBP is combined with the Histogram of oriented gradients (HOG) descriptor, it improves the detection performance considerably on some datasets.
 
 As LBP is a visual descriptor it can also be used for face recognition tasks, as can be seen in the following Step-by-Step explanation.
@@ -26,7 +44,7 @@ In this section, it is shown a step-by-step explanation of the LBPH algorithm:
 7. To predict a new image we just need to call the `Predict` function passing the image as parameter. The `Predict` function will extract the histogram from the new image and will return the label and distance corresponding to the closest histogram if no error has occurred (e.g. the image is not in grayscale, or image does not have the same size).
 8. It uses the normalized euclidean distance to calculate the similarity of the histograms. We can assume that the distance returned by the `Predict` function is the confidence and assume that the algorithm result is correct based on this confidence. The closer to zero is the distance, the greater is the confidence.
 
-## Important Notes
+### Important Notes
 
 - The similarity between two histograms is calculated using the normalized euclidean distance presented in the following formula:
 
@@ -34,13 +52,35 @@ In this section, it is shown a step-by-step explanation of the LBPH algorithm:
 
 - The current LBPH implementation uses a fixed `radius` of `1` and a fixed number of `neighbors` equal to `8`. In the future, we intend to provide an option to the user set these values as parameters.
 
-## Installation
+## I/O
+
+### Input
+
+All input images (for train and test) must have the same size. Different of OpenCV, the images don't need to be in grayscale, because each pixel is automatically converted to grayscale in the LBP process using the following [formula](https://en.wikipedia.org/wiki/Grayscale#Luma_coding_in_video_systems):
+
+```
+Y = (0.299 * RED) + (0.587 * GREEN) + (0.114 * BLUE)
+```
+
+### Output
+
+The Predict function returns 3 values:
+
+* **label**: The label corresponding to the predicted image.
+* **distance**: The distance between the histograms from the input test image and the matched image.
+* **err**: Some error that has occurred in the Predict step. If no error occurs it will returns nil.
+
+Using the label you can check if the algorithm has correctly predicted the image. In a real world application, it is not feasible to manually verify all images, so we can use the distance to infer if the algorithm has predicted correctly or not.
+
+## Usage
+
+### Installation
 
 ```
 $ go get github.com/kelvins/lbph
 ```
 
-## Usage
+### Usage Example
 
 Usage example:
 
@@ -137,7 +177,7 @@ func checkError(err error) {
 
 ```
 
-## Parameters
+### Parameters
 
 * **Radius**: The radius used for building the Circular Local Binary Pattern. Default value is 1.
 
