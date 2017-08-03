@@ -76,9 +76,13 @@ Using the label you can check if the algorithm has correctly predicted the image
 
 ### Installation
 
+Use the following `go get` command:
+
 ```
-$ go get github.com/kelvins/lbph
+$ go get -t github.com/kelvins/lbph
 ```
+
+It will get the package and its dependencies, including the test dependencies.
 
 ### Usage Example
 
