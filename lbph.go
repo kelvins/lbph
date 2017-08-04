@@ -8,7 +8,6 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 
-	"github.com/kelvins/lbph/common"
 	"github.com/kelvins/lbph/histogram"
 	"github.com/kelvins/lbph/lbp"
 	"github.com/kelvins/lbph/metric"
@@ -103,6 +102,46 @@ func GetTrainingData() TrainingData {
 	return *trainingData
 }
 
+// checkImagesSizes function is used to check if all images have the same size.
+func checkImagesSizes(images []image.Image) error {
+	// Check if the slice is empty
+	if len(images) == 0 {
+		return errors.New("The images slice is empty")
+	}
+	// Check if the first image is nil
+	if images[0] == nil {
+		return errors.New("At least one image in the slice is nil")
+	}
+
+	// Get the image size from the first image
+	defaultWidth, defaultHeight := lbp.GetImageSize(images[0])
+
+	// Check if the size is valid
+	// This condition should never happen because
+	// we already tested if the image was nil
+	if defaultWidth <= 0 || defaultHeight <= 0 {
+		return errors.New("At least one image have an invalid size")
+	}
+
+	// Check each image in the slice
+	for index := 0; index < len(images); index++ {
+		// Check if the current image is nil
+		if images[index] == nil {
+			return errors.New("At least one image in the slice is nil")
+		}
+
+		// Get the size from the current image
+		width, height := lbp.GetImageSize(images[index])
+
+		// Check if all images have the same size
+		if width != defaultWidth || height != defaultHeight {
+			return errors.New("One or more images have different sizes")
+		}
+	}
+	// No error has occurred, return nil
+	return nil
+}
+
 // Train function is used for training the LBPH algorithm based on the
 // images and labels passed by parameter. It basically checks the input
 // data, calculates the LBP operation and gets the histogram of each image.
@@ -122,7 +161,7 @@ func Train(images []image.Image, labels []string) error {
 
 	// Call the CheckImagesSizes from the common package.
 	// It will check if all images have the same size.
-	err := common.CheckImagesSizes(images)
+	err := checkImagesSizes(images)
 	if err != nil {
 		return err
 	}

@@ -2,11 +2,34 @@ package lbp
 
 import (
 	"testing"
-
-	"github.com/kelvins/lbph/common"
+	"image"
+	"os"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/pkg/errors"
 )
+
+// LoadImage function is used to provide an easy way to load an image file.
+func LoadImage(filePath string) (image.Image, error) {
+	// Open the image file
+	fImage, err := os.Open(filePath)
+	// Check if no error has occurred
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed to open an image file")
+	}
+
+	// Ensure that the image file will be closed
+	defer fImage.Close()
+
+	// Decode it to an image "object" (we don't need the format name so we use "_")
+	img, _, err := image.Decode(fImage)
+	// Check if no error has occurred
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed decoding the image file")
+	}
+
+	return img, nil
+}
 
 func TestGetBinary(t *testing.T) {
 	// Table tests
@@ -28,7 +51,7 @@ func TestGetBinary(t *testing.T) {
 }
 
 func TestApplyLBP(t *testing.T) {
-	img, err := common.LoadImage("../dataset/test/4.png")
+	img, err := LoadImage("../dataset/test/4.png")
 	assert.Nil(t, err)
 
 	// Results manually calculated (radius:1 - neighbors:8)
