@@ -1,5 +1,6 @@
 package metric
 
+// Metrics based on the math package
 const (
 	ChiSquare string = "ChiSquare"
 	EuclideanDistance string = "EuclideanDistance"

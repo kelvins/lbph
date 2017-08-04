@@ -27,9 +27,10 @@ func sum(slice []uint8) float64 {
 // by the following formula: sqrt(sum((h1(i)-h2(i))^2))
 // Reference: http://www.pbarrett.net/techpapers/euclid.pdf
 func EuclideanDistance(hist1, hist2 []uint8) (float64, error) {
+
 	// Check the histogram sizes
 	if len(hist1) != len(hist2) {
-		return 0, errors.New("Could not calculate the histogram distance. The slices have different sizes.")
+		return 0, errors.New("Could not compare the histograms. The slices have different sizes.")
 	}
 
 	var sum float64
@@ -42,9 +43,10 @@ func EuclideanDistance(hist1, hist2 []uint8) (float64, error) {
 // NormalizedEuclideanDistance calculates the euclidean distance normalized.
 // Reference: http://www.pbarrett.net/techpapers/euclid.pdf
 func NormalizedEuclideanDistance(hist1, hist2 []uint8) (float64, error) {
+
 	// Check the histogram sizes
 	if len(hist1) != len(hist2) {
-		return 0, errors.New("Could not calculate the histogram distance. The slices have different sizes.")
+		return 0, errors.New("Could not compare the histograms. The slices have different sizes.")
 	}
 
 	var sum float64
@@ -56,6 +58,7 @@ func NormalizedEuclideanDistance(hist1, hist2 []uint8) (float64, error) {
 
 // Intersection calculates the intersection between two histograms
 // by the following formula: sum(min(h1(i), h2(i)))
+// IMPORTANT: This is inversely proportional, higher the intersection higher the similarity.
 // References:
 // http://blog.datadive.net/histogram-intersection-for-change-detection/
 // https://dsp.stackexchange.com/questions/18065/histogram-intersection-with-two-different-bin-sizes
@@ -63,7 +66,7 @@ func NormalizedEuclideanDistance(hist1, hist2 []uint8) (float64, error) {
 func Intersection(hist1, hist2 []uint8) (float64, error)  {
 	// Check the histogram sizes
 	if len(hist1) != len(hist2) {
-		return 0, errors.New("Could not calculate the histogram distance. The slices have different sizes.")
+		return 0, errors.New("Could not compare the histograms. The slices have different sizes.")
 	}
 
 	var sum float64
@@ -81,18 +84,26 @@ func Intersection(hist1, hist2 []uint8) (float64, error)  {
 func NormalizedIntersection(hist1, hist2 []uint8) (float64, error)  {
 	// Check the histogram sizes
 	if len(hist1) != len(hist2) {
-		return 0, errors.New("Could not calculate the histogram distance. The slices have different sizes.")
+		return 0, errors.New("Could not compare the histograms. The slices have different sizes.")
 	}
+	//sum1 := sum(hist1)
+	//sum2 := sum(hist2)
+	/*var mini float64
+	if sum1 < sum2 {
+		mini = sum1
+	} else {
+		mini = sum2
+	}*/
 
-	inter, err := Intersection(hist1, hist2)
-	if err != nil {
-		return 0, err
+	var inter float64
+	for index := 0; index < len(hist1); index++ {
+		inter += float64(min(hist1[index], hist2[index]))
 	}
 
 	sum1 := sum(hist1)
 	sum2 := sum(hist2)
 
-	if sum1 < sum2 {
+	if sum1 > sum2 {
 		return inter/sum1, nil
 	} else {
 		return inter/sum2, nil
@@ -107,7 +118,7 @@ func NormalizedIntersection(hist1, hist2 []uint8) (float64, error)  {
 func ChiSquare(hist1, hist2 []uint8) (float64, error)  {
 	// Check the histogram sizes
 	if len(hist1) != len(hist2) {
-		return 0, errors.New("Could not calculate the histogram distance. The slices have different sizes.")
+		return 0, errors.New("Could not compare the histograms. The slices have different sizes.")
 	}
 
 	var sum float64

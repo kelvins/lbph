@@ -228,7 +228,7 @@ func Predict(img image.Image) (string, float64, error) {
 	}
 
 	// Search for the closest histogram based on the histograms calculated in the training step.
-	minDistance, err := histogram.CalcHistogramDist(hist, trainingData.Histograms[0], Metric)
+	minDistance, err := histogram.CompareHistograms(hist, trainingData.Histograms[0], Metric)
 	if err != nil {
 		return "", 0.0, err
 	}
@@ -236,7 +236,7 @@ func Predict(img image.Image) (string, float64, error) {
 	minIndex := 0
 	for index := 1; index < len(trainingData.Histograms); index++ {
 		// Calculate the distance from the current histogram.
-		distance, err := histogram.CalcHistogramDist(hist, trainingData.Histograms[index], Metric)
+		distance, err := histogram.CompareHistograms(hist, trainingData.Histograms[index], Metric)
 		if err != nil {
 			return "", 0.0, err
 		}

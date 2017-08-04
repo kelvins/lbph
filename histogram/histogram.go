@@ -73,10 +73,10 @@ func GetHistogram(pixels [][]uint8, gridX, gridY uint8) ([]uint8, error) {
 	return hist, nil
 }
 
-// CalcHistogramDist function calculates the distance between two histograms.
+// CompareHistograms function calculates the distance between two histograms.
 // Histogram comparison references:
 // http://docs.opencv.org/2.4/doc/tutorials/imgproc/histograms/histogram_comparison/histogram_comparison.html
-func CalcHistogramDist(hist1, hist2 []uint8, selectedMetric string) (float64, error) {
+func CompareHistograms(hist1, hist2 []uint8, selectedMetric string) (float64, error) {
 
 	switch selectedMetric {
 	case metric.ChiSquare:
@@ -91,6 +91,6 @@ func CalcHistogramDist(hist1, hist2 []uint8, selectedMetric string) (float64, er
 		return math.NormalizedIntersection(hist1, hist2)
 	}
 
-	return 0, errors.New("Invalid metric selected to calculate the histogram distance")
+	return 0, errors.New("Invalid metric selected to compare the histograms")
 }
 
