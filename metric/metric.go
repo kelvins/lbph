@@ -1,4 +1,4 @@
-package metrics
+package metric
 
 const (
 	ChiSquare string = "ChiSquare"

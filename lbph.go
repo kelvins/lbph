@@ -11,7 +11,7 @@ import (
 	"github.com/kelvins/lbph/common"
 	"github.com/kelvins/lbph/histogram"
 	"github.com/kelvins/lbph/lbp"
-	"github.com/kelvins/lbph/metrics"
+	"github.com/kelvins/lbph/metric"
 )
 
 // Store the input data (images and labels) and the calculated histogram.
@@ -50,7 +50,7 @@ func init() {
 	trainData = nil
 
 	// Use the ChiSquare as the default metric
-	Metric = metrics.ChiSquare
+	Metric = metric.ChiSquare
 }
 
 // Init function is used to set the LBPH parameters based on the Parameters structure.

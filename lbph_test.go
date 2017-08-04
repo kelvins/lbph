@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/kelvins/lbph/common"
-	"github.com/kelvins/lbph/metrics"
+	"github.com/kelvins/lbph/metric"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -52,7 +52,7 @@ func TestPredict(t *testing.T) {
 		{"./dataset/test/3.png", "grass"},
 	}
 
-	Metric = metrics.EuclideanDistance
+	Metric = metric.EuclideanDistance
 
 	// Test with all values in the table
 	for _, pair := range tTable {

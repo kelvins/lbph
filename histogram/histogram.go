@@ -4,7 +4,7 @@ import (
 	"errors"
 
 	"github.com/kelvins/lbph/math"
-	"github.com/kelvins/lbph/metrics"
+	"github.com/kelvins/lbph/metric"
 )
 
 // GetHistogram function generates a histogram based on the 'matrix' passed by parameter.
@@ -76,20 +76,20 @@ func GetHistogram(pixels [][]uint8, gridX, gridY uint8) ([]uint8, error) {
 // GetHistogramDist function calculates the distance between two histograms.
 // Histogram comparison:
 // http://docs.opencv.org/2.4/doc/tutorials/imgproc/histograms/histogram_comparison/histogram_comparison.html
-func CalcHistogramDist(hist1, hist2 []uint8, metric string) (float64, error) {
+func CalcHistogramDist(hist1, hist2 []uint8, selectedMetric string) (float64, error) {
 	// Check the histogram sizes
 	if len(hist1) != len(hist2) {
 		return 0, errors.New("Could not calculate the histogram distance. The slices have different sizes")
 	}
 
-	switch metric {
-	case metrics.ChiSquare:
+	switch selectedMetric {
+	case metric.ChiSquare:
 		return math.ChiSquare(hist1, hist2), nil
-	case metrics.EuclideanDistance:
+	case metric.EuclideanDistance:
 		return math.EuclideanDistance(hist1, hist2), nil
-	case metrics.Intersection:
+	case metric.Intersection:
 		return math.Intersection(hist1, hist2), nil
-	case metrics.NormalizedIntersection:
+	case metric.NormalizedIntersection:
 		return math.NormalizedIntersection(hist1, hist2), nil
 	}
 
