@@ -84,16 +84,6 @@ func CheckImagesSizes(images []image.Image) error {
 	return nil
 }
 
-// GetBinaryString function used to get a binary value as a string based on a threshold.
-// Return "1" if the value is equal or higher than the threshold or "0" otherwise.
-func GetBinaryString(value, threshold uint8) string {
-	if value >= threshold {
-		return "1"
-	} else {
-		return "0"
-	}
-}
-
 // GetPixels function returns a 'matrix' ([][]uint8) containing all pixels from the image passed by parameter.
 func GetPixels(img image.Image) [][]uint8 {
 	var pixels [][]uint8

@@ -8,6 +8,25 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestGetBinary(t *testing.T) {
+	// Table tests
+	var tTable = []struct {
+		value     uint8
+		threshold uint8
+		result    string
+	}{
+		{120, 120, "1"},
+		{214, 190, "1"},
+		{150, 240, "0"},
+	}
+
+	// Test with all values in the table
+	for _, pair := range tTable {
+		result := getBinaryString(pair.value, pair.threshold)
+		assert.Equal(t, result, pair.result, "The result should be equal")
+	}
+}
+
 func TestApplyLBP(t *testing.T) {
 	img, err := common.LoadImage("../dataset/test/4.png")
 	assert.Nil(t, err)

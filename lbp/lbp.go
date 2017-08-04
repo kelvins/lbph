@@ -11,6 +11,16 @@ import (
 	"github.com/kelvins/lbph/common"
 )
 
+// getBinaryString function used to get a binary value as a string based on a threshold.
+// Return "1" if the value is equal or higher than the threshold or "0" otherwise.
+func getBinaryString(value, threshold uint8) string {
+	if value >= threshold {
+		return "1"
+	} else {
+		return "0"
+	}
+}
+
 // ApplyLBP applies the LBP operation based on the radius and neighbors passed by parameter
 // The radius and neighbors parameters are not in use
 func ApplyLBP(img image.Image, radius, neighbors uint8) ([][]uint8, error) {
@@ -47,7 +57,7 @@ func ApplyLBP(img image.Image, radius, neighbors uint8) ([][]uint8, error) {
 				for tempY := y - 1; tempY <= y+1; tempY++ {
 					// Get the binary for all pixels around the threshold
 					if tempX != x || tempY != y {
-						binaryResult += common.GetBinaryString(pixels[tempX][tempY], threshold)
+						binaryResult += getBinaryString(pixels[tempX][tempY], threshold)
 					}
 				}
 			}
