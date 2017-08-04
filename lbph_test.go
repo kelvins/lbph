@@ -51,6 +51,8 @@ func TestPredict(t *testing.T) {
 		{"./dataset/test/3.png", "grass"},
 	}
 
+	Metric = EuclideanDistance
+
 	// Test with all values in the table
 	for _, pair := range tTable {
 		img, _ := common.LoadImage(pair.path)

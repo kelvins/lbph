@@ -13,6 +13,21 @@ import (
 	"github.com/kelvins/lbph/lbp"
 )
 
+const (  // iota is reset to 0
+	c0 = iota  // c0 == 0
+	c1 = iota  // c1 == 1
+	c2 = iota  // c2 == 2
+)
+
+var Metric string
+
+const (
+	ChiSquare string = "ChiSquare"
+	EuclideanDistance string = "EuclideanDistance"
+	Intersection string = "Intersection"
+	NormalizedIntersection string = "NormalizedIntersection"
+)
+
 // Structure used to pass the LBPH parameters.
 type Parameters struct {
 	Radius    uint8
@@ -44,6 +59,7 @@ var (
 func init() {
 	// As the trainData is a pointer, the initial state can be nil.
 	trainData = nil
+	Metric = ChiSquare
 }
 
 // Init function is used to set the LBPH parameters based on the Parameters structure.
@@ -166,7 +182,7 @@ func Predict(img image.Image) (string, float64, error) {
 	}
 
 	// Search for the closest histogram based on the histograms calculated in the Train function
-	minValue, err := histogram.CalcHistogramDist(hist, trainData.Histograms[0])
+	minValue, err := histogram.CalcHistogramDist(hist, trainData.Histograms[0], Metric)
 	if err != nil {
 		return "", 0.0, err
 	}
@@ -174,7 +190,7 @@ func Predict(img image.Image) (string, float64, error) {
 	minIndex := 0
 	for index := 1; index < len(trainData.Histograms); index++ {
 		// Calculate the distance from the current histogram
-		dist, err := histogram.CalcHistogramDist(hist, trainData.Histograms[index])
+		dist, err := histogram.CalcHistogramDist(hist, trainData.Histograms[index], Metric)
 		if err != nil {
 			return "", 0.0, err
 		}

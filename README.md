@@ -57,7 +57,7 @@ In this section, it is shown a step-by-step explanation of the LBPH algorithm:
 
 ### Input
 
-All input images (for training and testing) must have the same size. Different of OpenCV, the images don't need to be in grayscale, because each pixel is automatically converted to grayscale in the [GetPixels](https://github.com/kelvins/lbph/blob/master/common/common.go#L118) function using the following [formula](https://en.wikipedia.org/wiki/Grayscale#Luma_coding_in_video_systems):
+All input images (for training and testing) must have the same size. Different of OpenCV, the images don't need to be in grayscale, because each pixel is automatically converted to grayscale in the [GetPixels](https://github.com/kelvins/lbph/blob/master/common/common.go#L108) function using the following [formula](https://en.wikipedia.org/wiki/Grayscale#Luma_coding_in_video_systems):
 
 ```
 Y = (0.299 * RED) + (0.587 * GREEN) + (0.114 * BLUE)

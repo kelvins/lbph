@@ -2,7 +2,8 @@ package histogram
 
 import (
 	"errors"
-	"math"
+
+	"github.com/kelvins/lbph/math"
 )
 
 // GetHistogram function generates a histogram based on the 'matrix' passed by parameter.
@@ -71,20 +72,33 @@ func GetHistogram(pixels [][]uint8, gridX, gridY uint8) ([]uint8, error) {
 	return hist, nil
 }
 
+const (
+	ChiSquare string = "ChiSquare"
+	EuclideanDistance string = "EuclideanDistance"
+	Intersection string = "Intersection"
+	NormalizedIntersection string = "NormalizedIntersection"
+)
+
 // GetHistogramDist function calculates the distance between two histograms.
-// It uses the euclidean distance.
-func CalcHistogramDist(hist1, hist2 []uint8) (float64, error) {
-	return euclideanDistance(hist1, hist2)
+// Histogram comparison:
+// http://docs.opencv.org/2.4/doc/tutorials/imgproc/histograms/histogram_comparison/histogram_comparison.html
+func CalcHistogramDist(hist1, hist2 []uint8, metric string) (float64, error) {
+	// Check the histogram sizes
+	if len(hist1) != len(hist2) {
+		return 0, errors.New("Could not calculate the histogram distance. The slices have different sizes")
+	}
+
+	switch metric {
+	case ChiSquare:
+		return math.ChiSquare(hist1, hist2), nil
+	case EuclideanDistance:
+		return math.EuclideanDistance(hist1, hist2), nil
+	case Intersection:
+		return math.Intersection(hist1, hist2), nil
+	case NormalizedIntersection:
+		return math.NormalizedIntersection(hist1, hist2), nil
+	}
+
+	return 0, errors.New("Invalid metric selected to calculate the histogram distance")
 }
 
-// Calculate the euclidean distance between two variables: sum = sqrt((h1(i)-h2(i))^2)
-func euclideanDistance(variable1, variable2 []uint8) (float64, error) {
-	if len(variable1) != len(variable2) {
-		return 0, errors.New("Could not calculate the euclidean distance. The slices have different sizes")
-	}
-	var sum float64
-	for index := 0; index < len(variable1); index++ {
-		sum += float64((variable1[index] - variable2[index]) * (variable1[index] - variable2[index]))
-	}
-	return math.Sqrt(sum), nil
-}

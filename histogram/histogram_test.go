@@ -60,7 +60,7 @@ func TestCalcHistogramDist(t *testing.T) {
 		hist2 = append(hist2, uint8(index))
 	}
 
-	dist, _ := CalcHistogramDist(hist1, hist2)
+	dist, _ := CalcHistogramDist(hist1, hist2, EuclideanDistance)
 	assert.Equal(t, dist, 0.0, "The distance should be 0")
 
 	hist1 = nil
@@ -71,6 +71,6 @@ func TestCalcHistogramDist(t *testing.T) {
 		hist2 = append(hist2, uint8(index+1))
 	}
 
-	dist, _ = CalcHistogramDist(hist1, hist2)
+	dist, _ = CalcHistogramDist(hist1, hist2, EuclideanDistance)
 	assert.Equal(t, dist, 10.0, "The distance should be equal to 10")
 }
