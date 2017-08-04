@@ -11,22 +11,15 @@ import (
 	"github.com/kelvins/lbph/common"
 	"github.com/kelvins/lbph/histogram"
 	"github.com/kelvins/lbph/lbp"
+	"github.com/kelvins/lbph/metrics"
 )
 
-const (  // iota is reset to 0
-	c0 = iota  // c0 == 0
-	c1 = iota  // c1 == 1
-	c2 = iota  // c2 == 2
-)
-
-var Metric string
-
-const (
-	ChiSquare string = "ChiSquare"
-	EuclideanDistance string = "EuclideanDistance"
-	Intersection string = "Intersection"
-	NormalizedIntersection string = "NormalizedIntersection"
-)
+// Store the input data (images and labels) and the calculated histogram.
+type TrainDataStruct struct {
+	Images     []image.Image
+	Labels     []string
+	Histograms [][]uint8
+}
 
 // Structure used to pass the LBPH parameters.
 type Parameters struct {
@@ -34,13 +27,6 @@ type Parameters struct {
 	Neighbors uint8
 	GridX     uint8
 	GridY     uint8
-}
-
-// Store the input data (images and labels) and the calculated histogram.
-type TrainDataStruct struct {
-	Images     []image.Image
-	Labels     []string
-	Histograms [][]uint8
 }
 
 var (
@@ -56,13 +42,20 @@ var (
 	}
 )
 
+// The metric used to compare the histograms in the Predict step
+var Metric string
+
 func init() {
 	// As the trainData is a pointer, the initial state can be nil.
 	trainData = nil
-	Metric = ChiSquare
+
+	// Use the ChiSquare as the default metric
+	Metric = metrics.ChiSquare
 }
 
 // Init function is used to set the LBPH parameters based on the Parameters structure.
+// It is needed to set the default parameters if something is wrong and
+// to reset the trainData if new parameters are defined
 func Init(parameters Parameters) {
 
 	// If some parameter is wrong (== 0) set the default one.

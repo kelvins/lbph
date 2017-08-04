@@ -3,6 +3,8 @@ package histogram
 import (
 	"testing"
 
+	"github.com/kelvins/lbph/metrics"
+
 	"github.com/stretchr/testify/assert"
 )
 
@@ -60,7 +62,7 @@ func TestCalcHistogramDist(t *testing.T) {
 		hist2 = append(hist2, uint8(index))
 	}
 
-	dist, _ := CalcHistogramDist(hist1, hist2, EuclideanDistance)
+	dist, _ := CalcHistogramDist(hist1, hist2, metrics.EuclideanDistance)
 	assert.Equal(t, dist, 0.0, "The distance should be 0")
 
 	hist1 = nil
@@ -71,6 +73,6 @@ func TestCalcHistogramDist(t *testing.T) {
 		hist2 = append(hist2, uint8(index+1))
 	}
 
-	dist, _ = CalcHistogramDist(hist1, hist2, EuclideanDistance)
+	dist, _ = CalcHistogramDist(hist1, hist2, metrics.EuclideanDistance)
 	assert.Equal(t, dist, 10.0, "The distance should be equal to 10")
 }
