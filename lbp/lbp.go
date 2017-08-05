@@ -65,9 +65,9 @@ func GetPixels(img image.Image) [][]uint8 {
 	return pixels
 }
 
-// ApplyLBP applies the LBP operation based on the radius and neighbors passed by parameter
-// The radius and neighbors parameters are not in use
-func ApplyLBP(img image.Image, radius, neighbors uint8) ([][]uint8, error) {
+// Calculate function calculates the LBP based on the radius and neighbors passed by parameter.
+// The radius and neighbors parameters are not in use.
+func Calculate(img image.Image, radius, neighbors uint8) ([][]uint8, error) {
 
 	var lbpPixels [][]uint8
 	// Check the parameters

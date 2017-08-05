@@ -7,8 +7,8 @@ import (
 	"github.com/kelvins/lbph/metric"
 )
 
-// GetHistogram function generates a histogram based on the 'matrix' passed by parameter.
-func GetHistogram(pixels [][]uint8, gridX, gridY uint8) ([]uint8, error) {
+// Calculate function generates a histogram based on the 'matrix' passed by parameter.
+func Calculate(pixels [][]uint8, gridX, gridY uint8) ([]uint8, error) {
 	var hist []uint8
 
 	// Check the pixels 'matrix'
@@ -73,10 +73,10 @@ func GetHistogram(pixels [][]uint8, gridX, gridY uint8) ([]uint8, error) {
 	return hist, nil
 }
 
-// CompareHistograms function calculates the distance between two histograms.
+// Compare function is used to compare two histograms using a selected metric.
 // Histogram comparison references:
 // http://docs.opencv.org/2.4/doc/tutorials/imgproc/histograms/histogram_comparison/histogram_comparison.html
-func CompareHistograms(hist1, hist2 []uint8, selectedMetric string) (float64, error) {
+func Compare(hist1, hist2 []uint8, selectedMetric string) (float64, error) {
 
 	switch selectedMetric {
 	case metric.ChiSquare:

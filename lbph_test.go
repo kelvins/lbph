@@ -80,11 +80,11 @@ func TestPredict(t *testing.T) {
 	// Test with all values in the table
 	for _, pair := range tTable {
 		img, _ := LoadImage(pair.path)
-		lbl, dist, err := Predict(img)
+		lbl, conf, err := Predict(img)
 		assert.Nil(t, err)
 		assert.Equal(t, lbl, pair.label, "The labels should be equal")
-		if dist > 500 || dist < 0 {
-			assert.Equal(t, dist, 250, "The distance should be between 0 and 500")
+		if conf > 500 || conf < 0 {
+			assert.Equal(t, conf, 250.0, "The confidence should be between 0 and 500")
 		}
 	}
 

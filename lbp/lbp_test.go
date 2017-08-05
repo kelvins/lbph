@@ -50,7 +50,7 @@ func TestGetBinary(t *testing.T) {
 	}
 }
 
-func TestApplyLBP(t *testing.T) {
+func TestCalculate(t *testing.T) {
 	img, err := LoadImage("../dataset/test/4.png")
 	assert.Nil(t, err)
 
@@ -61,7 +61,7 @@ func TestApplyLBP(t *testing.T) {
 	expectedLBP = append(expectedLBP, []uint8{115, 255, 175, 119})
 	expectedLBP = append(expectedLBP, []uint8{205, 186, 125, 218})
 
-	pixels, err := ApplyLBP(img, 1, 8)
+	pixels, err := Calculate(img, 1, 8)
 	assert.Nil(t, err)
 
 	// Check each pixel

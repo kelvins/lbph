@@ -170,13 +170,13 @@ func Train(images []image.Image, labels []string) error {
 	var histograms [][]uint8
 	for index := 0; index < len(images); index++ {
 		// Calculate the LBP operation for the current image.
-		pixels, err := lbp.ApplyLBP(images[index], lbphParameters.Radius, lbphParameters.Neighbors)
+		pixels, err := lbp.Calculate(images[index], lbphParameters.Radius, lbphParameters.Neighbors)
 		if err != nil {
 			return err
 		}
 
 		// Get the histogram from the current image.
-		hist, err := histogram.GetHistogram(pixels, lbphParameters.GridX, lbphParameters.GridY)
+		hist, err := histogram.Calculate(pixels, lbphParameters.GridX, lbphParameters.GridY)
 		if err != nil {
 			return err
 		}
@@ -216,38 +216,46 @@ func Predict(img image.Image) (string, float64, error) {
 	}
 
 	// Calculate the LBP operation.
-	pixels, err := lbp.ApplyLBP(img, lbphParameters.Radius, lbphParameters.Neighbors)
+	pixels, err := lbp.Calculate(img, lbphParameters.Radius, lbphParameters.Neighbors)
 	if err != nil {
 		return "", 0.0, err
 	}
 
 	// Calculate the histogram for the image.
-	hist, err := histogram.GetHistogram(pixels, lbphParameters.GridX, lbphParameters.GridY)
+	hist, err := histogram.Calculate(pixels, lbphParameters.GridX, lbphParameters.GridY)
 	if err != nil {
 		return "", 0.0, err
 	}
 
 	// Search for the closest histogram based on the histograms calculated in the training step.
-	minDistance, err := histogram.CompareHistograms(hist, trainingData.Histograms[0], Metric)
+	minConfidence, err := histogram.Compare(hist, trainingData.Histograms[0], Metric)
 	if err != nil {
 		return "", 0.0, err
 	}
 
 	minIndex := 0
 	for index := 1; index < len(trainingData.Histograms); index++ {
-		// Calculate the distance from the current histogram.
-		distance, err := histogram.CompareHistograms(hist, trainingData.Histograms[index], Metric)
+		// Calculate the confidence from the current histogram.
+		confidence, err := histogram.Compare(hist, trainingData.Histograms[index], Metric)
 		if err != nil {
 			return "", 0.0, err
 		}
-		// If it is closer, save the minDistance and the index.
-		if distance < minDistance {
-			minDistance = distance
-			minIndex = index
+		if Metric == metric.Intersection {
+			// If it is closer, save the minConfidence and the index.
+			if confidence > minConfidence {
+				minConfidence = confidence
+				minIndex = index
+			}
+		} else {
+			// If it is closer, save the minConfidence and the index.
+			if confidence < minConfidence {
+				minConfidence = confidence
+				minIndex = index
+			}
 		}
 	}
 
 	// Return the label corresponding to the closest histogram,
-	// the distance (minDistance) and the error (nil).
-	return trainingData.Labels[minIndex], minDistance, nil
+	// the confidence (minConfidence) and the error (nil).
+	return trainingData.Labels[minIndex], minConfidence, nil
 }

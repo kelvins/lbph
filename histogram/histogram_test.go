@@ -8,10 +8,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetHistogram(t *testing.T) {
+func TestCalculate(t *testing.T) {
 	var pixels [][]uint8
 
-	_, err := GetHistogram(pixels, 1, 1)
+	_, err := Calculate(pixels, 1, 1)
 	assert.NotNil(t, err)
 
 	row1 := []uint8{255, 255, 255, 255, 255, 255}
@@ -23,17 +23,17 @@ func TestGetHistogram(t *testing.T) {
 	pixels = append(pixels, row2)
 	pixels = append(pixels, row1)
 
-	_, err = GetHistogram(pixels, 0, 1)
+	_, err = Calculate(pixels, 0, 1)
 	assert.NotNil(t, err)
 
-	_, err = GetHistogram(pixels, 1, 0)
+	_, err = Calculate(pixels, 1, 0)
 	assert.NotNil(t, err)
 
 	expectedHist := make([]uint8, 256)
 	expectedHist[0] = 24
 	expectedHist[255] = 12
 
-	hist, err := GetHistogram(pixels, 1, 1)
+	hist, err := Calculate(pixels, 1, 1)
 	assert.Nil(t, err)
 	assert.Equal(t, hist, expectedHist, "The histograms should be equal")
 
@@ -47,12 +47,12 @@ func TestGetHistogram(t *testing.T) {
 	expectedHist[768] = 6
 	expectedHist[1023] = 3
 
-	hist, err = GetHistogram(pixels, 2, 2)
+	hist, err = Calculate(pixels, 2, 2)
 	assert.Nil(t, err)
 	assert.Equal(t, hist, expectedHist, "The histograms should be equal")
 }
 
-func TestCalcHistogramDist(t *testing.T) {
+func TestCompare(t *testing.T) {
 	var hist1 []uint8
 	var hist2 []uint8
 
@@ -62,8 +62,8 @@ func TestCalcHistogramDist(t *testing.T) {
 		hist2 = append(hist2, uint8(index))
 	}
 
-	dist, _ := CompareHistograms(hist1, hist2, metric.EuclideanDistance)
-	assert.Equal(t, dist, 0.0, "The distance should be 0")
+	confidence, _ := Compare(hist1, hist2, metric.EuclideanDistance)
+	assert.Equal(t, confidence, 0.0, "The confidence should be 0")
 
 	hist1 = nil
 	hist2 = nil
@@ -73,6 +73,6 @@ func TestCalcHistogramDist(t *testing.T) {
 		hist2 = append(hist2, uint8(index+1))
 	}
 
-	dist, _ = CompareHistograms(hist1, hist2, metric.EuclideanDistance)
-	assert.Equal(t, dist, 10.0, "The distance should be equal to 10")
+	confidence, _ = Compare(hist1, hist2, metric.EuclideanDistance)
+	assert.Equal(t, confidence, 10.0, "The confidence should be equal to 10")
 }
