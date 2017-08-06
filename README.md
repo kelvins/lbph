@@ -7,7 +7,8 @@
 
 1. [Introduction](#introduction)
 2. [Step-by-Step](#step-by-step)  
-2.1. [Important Notes](#important-notes)
+2.1. [Comparing Histograms](#comparing-histograms)  
+2.2. [Important Notes](#important-notes)
 3. [I/O](#io)  
 3.1. [Input](#input)  
 3.2. [Output](#output)
@@ -15,6 +16,7 @@
 4.1. [Installation](#installation)  
 4.2. [Usage Example](#usage-example)  
 4.3. [Parameters](#parameters)  
+4.4. [Metrics](#metrics)  
 5. [References](#references)
 6. [How to contribute](#how-to-contribute)  
 6.1. [Contributing](#contributing)
@@ -45,11 +47,37 @@ In this section, it is shown a step-by-step explanation of the LBPH algorithm:
 8. To predict a new image we just need to call the `Predict` function passing the image as parameter. The `Predict` function will extract the histogram from the new image and will return the label and distance corresponding to the closest histogram if no error has occurred.
 9. It uses the [euclidean distance](#important-notes) to calculate the similarity of the histograms. The closer to zero is the distance, the greater is the confidence.
 
+### Comparing Histograms
+
+The LBPH package provides the following metrics to compare the histograms:
+
+**Chi-Square :**
+
+![Chi-Square](http://i.imgur.com/6CyngL9.gif)
+
+**Euclidean Distance :**
+
+![Euclidean Distance](http://i.imgur.com/6ll6hDU.gif)
+
+**Normalized Euclidean Distance :**
+
+![Normalized Euclidean Distance](http://i.imgur.com/6Wj2keg.gif)
+
+**Intersection :**
+
+![Intersection](http://i.imgur.com/EwAtqgX.gif)
+
+**Normalized Intersection :**
+
+![Normalized Intersection](http://i.imgur.com/yTowqFm.gif)
+
+**Absolute Value Norm**
+
+![Absolute Value Norm](http://i.imgur.com/27jXZ4V.gif)
+
+The comparison metric can be chosen as explained in the [metrics](#metrics) section.
+
 ### Important Notes
-
-- The similarity between two histograms is calculated using the normalized euclidean distance presented in the following formula:
-
-![Euclidean Distance](http://i.imgur.com/liBbl6u.gif)
 
 - The current LBPH implementation uses a fixed `radius` of `1` and a fixed number of `neighbors` equal to `8`. We need to implement the usage of these parameters (feel free to contribute here).
 
@@ -57,7 +85,7 @@ In this section, it is shown a step-by-step explanation of the LBPH algorithm:
 
 ### Input
 
-All input images (for training and testing) must have the same size. Different of OpenCV, the images don't need to be in grayscale, because each pixel is automatically converted to grayscale in the [GetPixels](https://github.com/kelvins/lbph/blob/master/common/common.go#L108) function using the following [formula](https://en.wikipedia.org/wiki/Grayscale#Luma_coding_in_video_systems):
+All input images (for training and testing) must have the same size. Different of OpenCV, the images don't need to be in grayscale, because each pixel is automatically converted to grayscale in the [GetPixels](https://github.com/kelvins/lbph/blob/master/lbp/lbp.go#L55) function using the following [formula](https://en.wikipedia.org/wiki/Grayscale#Luma_coding_in_video_systems):
 
 ```
 Y = (0.299 * RED) + (0.587 * GREEN) + (0.114 * BLUE)
@@ -94,45 +122,33 @@ Usage example:
 package main
 
 import (
-	"os"
-	"fmt"
 	"image"
+	"fmt"
+	"os"
 
 	"github.com/kelvins/lbph"
-	"github.com/kelvins/lbph/common"
+	"github.com/kelvins/lbph/metric"
 )
 
-var trainImagesPaths []string
-var trainLabels []string
-var trainImages []image.Image
-
-var testImagesPaths []string
-var testLabels []string
-var testImages []image.Image
-
-func init() {
-	trainImagesPaths = append(trainImagesPaths, "./dataset/train/1.png")
-	trainImagesPaths = append(trainImagesPaths, "./dataset/train/2.png")
-	trainImagesPaths = append(trainImagesPaths, "./dataset/train/3.png")
-
-	trainLabels = append(trainLabels, "rocks")
-	trainLabels = append(trainLabels, "grass")
-	trainLabels = append(trainLabels, "wood")
-
-	trainImages = loadImages(trainImagesPaths)
-
-	testImagesPaths = append(testImagesPaths, "./dataset/test/1.png")
-	testImagesPaths = append(testImagesPaths, "./dataset/test/2.png")
-	testImagesPaths = append(testImagesPaths, "./dataset/test/3.png")
-
-	testLabels = append(testLabels, "wood")
-	testLabels = append(testLabels, "rocks")
-	testLabels = append(testLabels, "grass")
-
-	testImages = loadImages(testImagesPaths)
-}
-
 func main() {
+
+	var paths []string
+	paths = append(paths, "./dataset/train/1.png")
+	paths = append(paths, "./dataset/train/2.png")
+	paths = append(paths, "./dataset/train/3.png")
+
+	var labels []string
+	labels = append(labels, "rocks")
+	labels = append(labels, "grass")
+	labels = append(labels, "wood")
+
+	var images []image.Image
+
+	for index := 0; index < len(paths); index++ {
+		img, err := LoadImage(paths[index])
+		checkError(err)
+		images = append(images, img)
+	}
 
 	parameters := lbph.Parameters{
 		Radius:    1,
@@ -143,34 +159,50 @@ func main() {
 
 	lbph.Init(parameters)
 
-	err := lbph.Train(trainImages, trainLabels)
+	err := lbph.Train(images, labels)
 	checkError(err)
 
-	for index := 0; index < len(testImages); index++ {
-		label, distance, err := lbph.Predict(testImages[index])
-		checkError(err)
+	paths = nil
+	paths = append(paths, "./dataset/test/1.png")
+	paths = append(paths, "./dataset/test/2.png")
+	paths = append(paths, "./dataset/test/3.png")
 
-		if label == testLabels[index] {
+	var expectedLabels []string
+	expectedLabels = append(expectedLabels, "wood")
+	expectedLabels = append(expectedLabels, "rocks")
+	expectedLabels = append(expectedLabels, "grass")
+
+	lbph.Metric = metric.EuclideanDistance
+
+	for index := 0; index < len(paths); index++ {
+		img, err := LoadImage(paths[index])
+		checkError(err)
+		label, confidence, err := lbph.Predict(img)
+		checkError(err)
+		if label == expectedLabels[index] {
 			fmt.Println("Image correctly predicted")
 		} else {
 			fmt.Println("Image wrongly predicted")
 		}
-
-		fmt.Printf("Predicted as %s expected %s\n", label, testLabels[index])
-		fmt.Printf("Distance: %f\n\n", distance)
+		fmt.Printf("Predicted as %s expected %s\n", label, expectedLabels[index])
+		fmt.Printf("Confidence: %f\n\n", confidence)
 	}
 }
 
-func loadImages(paths []string) []image.Image {
-	var images []image.Image
-
-	for index := 0; index < len(paths); index++ {
-		img, err := common.LoadImage(paths[index])
-		checkError(err)
-		images = append(images, img)
+func LoadImage(filePath string) (image.Image, error) {
+	fImage, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
 	}
 
-	return images
+	defer fImage.Close()
+
+	img, _, err := image.Decode(fImage)
+	if err != nil {
+		return nil, err
+	}
+
+	return img, nil
 }
 
 func checkError(err error) {
@@ -192,6 +224,17 @@ func checkError(err error) {
 
 * **GridY**: The number of cells in the vertical direction. The more cells, the finer the grid, the higher the dimensionality of the resulting feature vector. Default value is 8.
 
+### Metrics
+
+You can choose the following metrics from the `metric` package to compare the histograms:
+
+* metric.ChiSquare
+* metric.EuclideanDistance
+* metric.NormalizedEuclideanDistance
+* metric.Intersection
+* metric.NormalizedIntersection
+* metric.AbsoluteValueNorm
+
 ## References
 
 * Ahonen, Timo, Abdenour Hadid, and Matti Pietikäinen. "Face recognition with local binary patterns." Computer vision-eccv 2004 (2004): 469-481. Link: https://link.springer.com/chapter/10.1007/978-3-540-24670-1_36
@@ -199,6 +242,8 @@ func checkError(err error) {
 * Face Recognizer module. Open Source Computer Vision Library (OpenCV) Documentation. Version 3.0. Link: http://docs.opencv.org/3.0-beta/modules/face/doc/facerec/facerec_api.html
 
 * Local binary patterns. Wikipedia. Link: https://en.wikipedia.org/wiki/Local_binary_patterns
+
+* OpenCV Histogram Comparison. http://docs.opencv.org/2.4/doc/tutorials/imgproc/histograms/histogram_comparison/histogram_comparison.html
 
 ## How to contribute
 
