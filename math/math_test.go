@@ -120,3 +120,25 @@ func TestNormalizedIntersection(t *testing.T) {
 		assert.Equal(t, pair.confidence, confidence)
 	}
 }
+
+func TestAbsoluteValueNorm(t *testing.T) {
+	// Table tests
+	var tTable = []struct {
+		hist1      []float64
+		hist2      []float64
+		confidence float64
+	}{
+		{[]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, []float64{9, 8, 7, 6, 5, 4, 3, 2, 1}, 40.0},
+		{[]float64{1, 1, 1, 1, 1, 1, 1, 1, 1}, []float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, 72.0},
+		{[]float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, []float64{1, 1, 1, 1, 1, 1, 1, 1, 1}, 72.0},
+		{[]float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, []float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, 0.0},
+		{[]float64{1, 4, 5, 4, 1, 0, 0, 0, 0}, []float64{0, 0, 0, 0, 0, 1, 3, 4, 2}, 25.0},
+	}
+
+	// Test with all values in the table
+	for _, pair := range tTable {
+		confidence, err := AbsoluteValueNorm(pair.hist1, pair.hist2)
+		assert.Nil(t, err)
+		assert.Equal(t, pair.confidence, confidence)
+	}
+}

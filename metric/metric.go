@@ -7,4 +7,5 @@ const (
 	NormalizedEuclideanDistance string = "NormalizedEuclideanDistance"
 	Intersection string = "Intersection"
 	NormalizedIntersection string = "NormalizedIntersection"
+	AbsoluteValueNorm string = "AbsoluteValueNorm"
 )

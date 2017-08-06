@@ -23,6 +23,15 @@ func sum(slice []float64) float64 {
 	return sum
 }
 
+// abs function returns the absolute value.
+func abs(a float64) float64 {
+	if a < 0 {
+		return a * -1.0
+	} else {
+		return a
+	}
+}
+
 // chiSquare calculates the distance between two histograms using
 // the chi square statistic.
 // x^2 = \sum_{i=1}^{n}\frac{(hist1_{i} - hist2_{i})^2}{hist1_{i}}
@@ -124,4 +133,20 @@ func NormalizedIntersection(hist1, hist2 []float64) (float64, error) {
 	} else {
 		return intersection / sum2, nil
 	}
+}
+
+// AbsoluteValueNorm calculates the absolute value normalized
+// by the following formula:
+// D = \sum_{i=1}^{n} \left | hist1_{i} - hist2_{i} \right |
+func AbsoluteValueNorm(hist1, hist2 []float64) (float64, error) {
+	// Check the histogram sizes
+	if len(hist1) != len(hist2) {
+		return 0, errors.New("Could not compare the histograms. The slices have different sizes.")
+	}
+
+	var sum float64
+	for index := 0; index < len(hist1); index++ {
+		sum += abs(hist1[index] - hist2[index])
+	}
+	return sum, nil
 }
