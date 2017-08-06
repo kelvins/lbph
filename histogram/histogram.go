@@ -8,8 +8,8 @@ import (
 )
 
 // Calculate function generates a histogram based on the 'matrix' passed by parameter.
-func Calculate(pixels [][]uint8, gridX, gridY uint8) ([]uint8, error) {
-	var hist []uint8
+func Calculate(pixels [][]uint8, gridX, gridY uint8) ([]float64, error) {
+	var hist []float64
 
 	// Check the pixels 'matrix'
 	if len(pixels) == 0 {
@@ -36,7 +36,7 @@ func Calculate(pixels [][]uint8, gridX, gridY uint8) ([]uint8, error) {
 	for gX := 0; gX < int(gridX); gX++ {
 		for gY := 0; gY < int(gridY); gY++ {
 			// Create a slice with empty 256 positions
-			regionHistogram := make([]uint8, 256)
+			regionHistogram := make([]float64, 256)
 
 			// Define the start and end positions for the following loop
 			startPosX := gX*gridWidth
@@ -76,7 +76,7 @@ func Calculate(pixels [][]uint8, gridX, gridY uint8) ([]uint8, error) {
 // Compare function is used to compare two histograms using a selected metric.
 // Histogram comparison references:
 // http://docs.opencv.org/2.4/doc/tutorials/imgproc/histograms/histogram_comparison/histogram_comparison.html
-func Compare(hist1, hist2 []uint8, selectedMetric string) (float64, error) {
+func Compare(hist1, hist2 []float64, selectedMetric string) (float64, error) {
 
 	switch selectedMetric {
 	case metric.ChiSquare:

@@ -29,15 +29,15 @@ func TestCalculate(t *testing.T) {
 	_, err = Calculate(pixels, 1, 0)
 	assert.NotNil(t, err)
 
-	expectedHist := make([]uint8, 256)
+	expectedHist := make([]float64, 256)
 	expectedHist[0] = 24
 	expectedHist[255] = 12
 
 	hist, err := Calculate(pixels, 1, 1)
 	assert.Nil(t, err)
-	assert.Equal(t, hist, expectedHist, "The histograms should be equal")
+	assert.Equal(t, expectedHist, hist, "The histograms should be equal")
 
-	expectedHist = make([]uint8, 1024)
+	expectedHist = make([]float64, 1024)
 	expectedHist[0] = 6
 	expectedHist[255] = 3
 	expectedHist[256] = 6
@@ -49,30 +49,29 @@ func TestCalculate(t *testing.T) {
 
 	hist, err = Calculate(pixels, 2, 2)
 	assert.Nil(t, err)
-	assert.Equal(t, hist, expectedHist, "The histograms should be equal")
+	assert.Equal(t, expectedHist, hist, "The histograms should be equal")
 }
 
 func TestCompare(t *testing.T) {
-	var hist1 []uint8
-	var hist2 []uint8
+	var hist1 []float64
+	var hist2 []float64
 
-	var index uint8
-	for index = 0; index < 100; index++ {
-		hist1 = append(hist1, uint8(index))
-		hist2 = append(hist2, uint8(index))
+	for index := 0; index < 100; index++ {
+		hist1 = append(hist1, float64(index))
+		hist2 = append(hist2, float64(index))
 	}
 
 	confidence, _ := Compare(hist1, hist2, metric.EuclideanDistance)
-	assert.Equal(t, confidence, 0.0, "The confidence should be 0")
+	assert.Equal(t, 0.0, confidence, "The confidence should be 0")
 
 	hist1 = nil
 	hist2 = nil
 
-	for index = 0; index < 100; index++ {
-		hist1 = append(hist1, uint8(index))
-		hist2 = append(hist2, uint8(index+1))
+	for index := 0; index < 100; index++ {
+		hist1 = append(hist1, float64(index))
+		hist2 = append(hist2, float64(index+1))
 	}
 
 	confidence, _ = Compare(hist1, hist2, metric.EuclideanDistance)
-	assert.Equal(t, confidence, 10.0, "The confidence should be equal to 10")
+	assert.Equal(t, 10.0, confidence, "The confidence should be equal to 10")
 }

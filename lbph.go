@@ -18,7 +18,7 @@ import (
 type TrainingData struct {
 	Images     []image.Image
 	Labels     []string
-	Histograms [][]uint8
+	Histograms [][]float64
 }
 
 // Parameters struct is used to pass the LBPH parameters.
@@ -167,7 +167,7 @@ func Train(images []image.Image, labels []string) error {
 	}
 
 	// Calculates the LBP operation and gets the histograms for each image.
-	var histograms [][]uint8
+	var histograms [][]float64
 	for index := 0; index < len(images); index++ {
 		// Calculate the LBP operation for the current image.
 		pixels, err := lbp.Calculate(images[index], lbphParameters.Radius, lbphParameters.Neighbors)
@@ -228,7 +228,7 @@ func Predict(img image.Image) (string, float64, error) {
 	}
 
 	// Search for the closest histogram based on the histograms calculated in the training step.
-	minConfidence, err := histogram.Compare(hist, trainingData.Histograms[0], Metric)
+	minMaxConfidence, err := histogram.Compare(hist, trainingData.Histograms[0], Metric)
 	if err != nil {
 		return "", 0.0, err
 	}
@@ -240,16 +240,16 @@ func Predict(img image.Image) (string, float64, error) {
 		if err != nil {
 			return "", 0.0, err
 		}
-		if Metric == metric.Intersection {
-			// If it is closer, save the minConfidence and the index.
-			if confidence > minConfidence {
-				minConfidence = confidence
+
+		if Metric == metric.Intersection || Metric == metric.NormalizedIntersection {
+			if confidence > minMaxConfidence {
+				minMaxConfidence = confidence
 				minIndex = index
 			}
 		} else {
 			// If it is closer, save the minConfidence and the index.
-			if confidence < minConfidence {
-				minConfidence = confidence
+			if confidence < minMaxConfidence {
+				minMaxConfidence = confidence
 				minIndex = index
 			}
 		}
@@ -257,5 +257,5 @@ func Predict(img image.Image) (string, float64, error) {
 
 	// Return the label corresponding to the closest histogram,
 	// the confidence (minConfidence) and the error (nil).
-	return trainingData.Labels[minIndex], minConfidence, nil
+	return trainingData.Labels[minIndex], minMaxConfidence, nil
 }

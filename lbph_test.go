@@ -83,7 +83,7 @@ func TestPredict(t *testing.T) {
 		lbl, conf, err := Predict(img)
 		assert.Nil(t, err)
 		assert.Equal(t, lbl, pair.label, "The labels should be equal")
-		if conf > 500 || conf < 0 {
+		if conf > 600 || conf < 0 {
 			assert.Equal(t, conf, 250.0, "The confidence should be between 0 and 500")
 		}
 	}
