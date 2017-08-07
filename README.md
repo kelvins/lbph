@@ -21,13 +21,13 @@
 6. [How to contribute](#how-to-contribute)  
 6.1. [Contributing](#contributing)
 
-## Introduction
+# Introduction
 
 Local Binary Patterns (LBP) is a type of visual descriptor used for classification in computer vision. LBP was first described in 1994 and has since been found to be a powerful feature for texture classification. It has further been determined that when LBP is combined with the Histogram of oriented gradients (HOG) descriptor, it improves the detection performance considerably on some datasets.
 
 As LBP is a visual descriptor it can also be used for face recognition tasks, as can be seen in the following Step-by-Step explanation.
 
-## Step-by-Step
+# Step-by-Step
 
 In this section, it is shown a step-by-step explanation of the LBPH algorithm:
 
@@ -47,7 +47,7 @@ In this section, it is shown a step-by-step explanation of the LBPH algorithm:
 8. To predict a new image we just need to call the `Predict` function passing the image as parameter. The `Predict` function will extract the histogram from the new image and will return the label and distance corresponding to the closest histogram if no error has occurred.
 9. It uses the [euclidean distance](#important-notes) to calculate the similarity of the histograms. The closer to zero is the distance, the greater is the confidence.
 
-### Comparing Histograms
+## Comparing Histograms
 
 The LBPH package provides the following metrics to compare the histograms:
 
@@ -77,13 +77,13 @@ The LBPH package provides the following metrics to compare the histograms:
 
 The comparison metric can be chosen as explained in the [metrics](#metrics) section.
 
-### Important Notes
+## Important Notes
 
 - The current LBPH implementation uses a fixed `radius` of `1` and a fixed number of `neighbors` equal to `8`. We need to implement the usage of these parameters (feel free to contribute here).
 
-## I/O
+# I/O
 
-### Input
+## Input
 
 All input images (for training and testing) must have the same size. Different of OpenCV, the images don't need to be in grayscale, because each pixel is automatically converted to grayscale in the [GetPixels](https://github.com/kelvins/lbph/blob/master/lbp/lbp.go#L55) function using the following [formula](https://en.wikipedia.org/wiki/Grayscale#Luma_coding_in_video_systems):
 
@@ -91,7 +91,7 @@ All input images (for training and testing) must have the same size. Different o
 Y = (0.299 * RED) + (0.587 * GREEN) + (0.114 * BLUE)
 ```
 
-### Output
+## Output
 
 The Predict function returns 3 values:
 
@@ -101,9 +101,9 @@ The Predict function returns 3 values:
 
 Using the label you can check if the algorithm has correctly predicted the image. In a real world application, it is not feasible to manually verify all images, so we can use the distance to infer if the algorithm has predicted correctly or not.
 
-## Usage
+# Usage
 
-### Installation
+## Installation
 
 Use the following `go get` command:
 
@@ -113,7 +113,7 @@ $ go get -t github.com/kelvins/lbph
 
 It will get the package and its dependencies, including the test dependencies.
 
-### Usage Example
+## Usage Example
 
 Usage example:
 
@@ -177,7 +177,7 @@ func main() {
 	for index := 0; index < len(paths); index++ {
 		img, err := LoadImage(paths[index])
 		checkError(err)
-		label, confidence, err := lbph.Predict(img)
+		label, distance, err := lbph.Predict(img)
 		checkError(err)
 		if label == expectedLabels[index] {
 			fmt.Println("Image correctly predicted")
@@ -185,22 +185,18 @@ func main() {
 			fmt.Println("Image wrongly predicted")
 		}
 		fmt.Printf("Predicted as %s expected %s\n", label, expectedLabels[index])
-		fmt.Printf("Confidence: %f\n\n", confidence)
+		fmt.Printf("Distance: %f\n\n", distance)
 	}
 }
 
 func LoadImage(filePath string) (image.Image, error) {
 	fImage, err := os.Open(filePath)
-	if err != nil {
-		return nil, err
-	}
+	checkError(err)
 
 	defer fImage.Close()
 
 	img, _, err := image.Decode(fImage)
-	if err != nil {
-		return nil, err
-	}
+	checkError(err)
 
 	return img, nil
 }
@@ -212,9 +208,10 @@ func checkError(err error) {
 	}
 }
 
+
 ```
 
-### Parameters
+## Parameters
 
 * **Radius**: The radius used for building the Circular Local Binary Pattern. Default value is 1.
 
@@ -224,7 +221,7 @@ func checkError(err error) {
 
 * **GridY**: The number of cells in the vertical direction. The more cells, the finer the grid, the higher the dimensionality of the resulting feature vector. Default value is 8.
 
-### Metrics
+## Metrics
 
 You can choose the following metrics from the `metric` package to compare the histograms:
 
@@ -233,9 +230,8 @@ You can choose the following metrics from the `metric` package to compare the hi
 * metric.NormalizedEuclideanDistance
 * metric.Intersection
 * metric.NormalizedIntersection
-* metric.AbsoluteValueNorm
 
-## References
+# References
 
 * Ahonen, Timo, Abdenour Hadid, and Matti Pietikäinen. "Face recognition with local binary patterns." Computer vision-eccv 2004 (2004): 469-481. Link: https://link.springer.com/chapter/10.1007/978-3-540-24670-1_36
 
@@ -245,11 +241,11 @@ You can choose the following metrics from the `metric` package to compare the hi
 
 * OpenCV Histogram Comparison. http://docs.opencv.org/2.4/doc/tutorials/imgproc/histograms/histogram_comparison/histogram_comparison.html
 
-## How to contribute
+# How to contribute
 
 Feel free to contribute by commenting, suggesting, creating [issues](https://github.com/kelvins/lbph/issues) or sending pull requests. Any help is welcome.
 
-### Contributing
+## Contributing
 
 1. Create an issue (optional)
 2. Fork the repo to your Github account
