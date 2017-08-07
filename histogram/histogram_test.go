@@ -61,8 +61,8 @@ func TestCompare(t *testing.T) {
 		hist2 = append(hist2, float64(index))
 	}
 
-	confidence, _ := Compare(hist1, hist2, metric.EuclideanDistance)
-	assert.Equal(t, 0.0, confidence, "The confidence should be 0")
+	distance, _ := Compare(hist1, hist2, metric.EuclideanDistance)
+	assert.Equal(t, 0.0, distance, "The distance should be 0")
 
 	hist1 = nil
 	hist2 = nil
@@ -72,6 +72,6 @@ func TestCompare(t *testing.T) {
 		hist2 = append(hist2, float64(index+1))
 	}
 
-	confidence, _ = Compare(hist1, hist2, metric.EuclideanDistance)
-	assert.Equal(t, 10.0, confidence, "The confidence should be equal to 10")
+	distance, _ = Compare(hist1, hist2, metric.EuclideanDistance)
+	assert.Equal(t, 10.0, distance, "The distance should be equal to 10")
 }

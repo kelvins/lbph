@@ -12,7 +12,7 @@ func TestChiSquare(t *testing.T) {
 	var tTable = []struct {
 		hist1      []float64
 		hist2      []float64
-		confidence float64
+		distance float64
 	}{
 		{[]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, []float64{9, 8, 7, 6, 5, 4, 3, 2, 1}, 102.8968253968254},
 		{[]float64{1, 1, 1, 1, 1, 1, 1, 1, 1}, []float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, 576.0},
@@ -23,12 +23,12 @@ func TestChiSquare(t *testing.T) {
 
 	// Test with all values in the table
 	for _, pair := range tTable {
-		confidence, err := ChiSquare(pair.hist1, pair.hist2)
+		distance, err := ChiSquare(pair.hist1, pair.hist2)
 		assert.Nil(t, err)
-		if pair.confidence >= 0 {
-			assert.Equal(t, pair.confidence, confidence)
+		if pair.distance >= 0 {
+			assert.Equal(t, pair.distance, distance)
 		} else {
-			assert.Equal(t, true, math.IsInf(confidence, 0))
+			assert.Equal(t, true, math.IsInf(distance, 0))
 		}
 	}
 }
@@ -38,7 +38,7 @@ func TestEuclideanDistance(t *testing.T) {
 	var tTable = []struct {
 		hist1      []float64
 		hist2      []float64
-		confidence float64
+		distance float64
 	}{
 		{[]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, []float64{9, 8, 7, 6, 5, 4, 3, 2, 1}, 15.491933384829668},
 		{[]float64{1, 1, 1, 1, 1, 1, 1, 1, 1}, []float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, 24.0},
@@ -49,9 +49,9 @@ func TestEuclideanDistance(t *testing.T) {
 
 	// Test with all values in the table
 	for _, pair := range tTable {
-		confidence, err := EuclideanDistance(pair.hist1, pair.hist2)
+		distance, err := EuclideanDistance(pair.hist1, pair.hist2)
 		assert.Nil(t, err)
-		assert.Equal(t, pair.confidence, confidence)
+		assert.Equal(t, pair.distance, distance)
 	}
 }
 
@@ -60,7 +60,7 @@ func TestNormalizedEuclideanDistance(t *testing.T) {
 	var tTable = []struct {
 		hist1      []float64
 		hist2      []float64
-		confidence float64
+		distance float64
 	}{
 		{[]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, []float64{9, 8, 7, 6, 5, 4, 3, 2, 1}, 5.163977794943222},
 		{[]float64{1, 1, 1, 1, 1, 1, 1, 1, 1}, []float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, 8.0},
@@ -71,9 +71,9 @@ func TestNormalizedEuclideanDistance(t *testing.T) {
 
 	// Test with all values in the table
 	for _, pair := range tTable {
-		confidence, err := NormalizedEuclideanDistance(pair.hist1, pair.hist2)
+		distance, err := NormalizedEuclideanDistance(pair.hist1, pair.hist2)
 		assert.Nil(t, err)
-		assert.Equal(t, pair.confidence, confidence)
+		assert.Equal(t, pair.distance, distance)
 	}
 }
 
@@ -82,7 +82,7 @@ func TestIntersection(t *testing.T) {
 	var tTable = []struct {
 		hist1      []float64
 		hist2      []float64
-		confidence float64
+		distance float64
 	}{
 		{[]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, []float64{9, 8, 7, 6, 5, 4, 3, 2, 1}, 40.0},
 		{[]float64{1, 1, 1, 1, 1, 1, 1, 1, 1}, []float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, 72.0},
@@ -93,9 +93,9 @@ func TestIntersection(t *testing.T) {
 
 	// Test with all values in the table
 	for _, pair := range tTable {
-		confidence, err := Intersection(pair.hist1, pair.hist2)
+		distance, err := Intersection(pair.hist1, pair.hist2)
 		assert.Nil(t, err)
-		assert.Equal(t, pair.confidence, confidence)
+		assert.Equal(t, pair.distance, distance)
 	}
 }
 
@@ -104,7 +104,7 @@ func TestNormalizedIntersection(t *testing.T) {
 	var tTable = []struct {
 		hist1      []float64
 		hist2      []float64
-		confidence float64
+		distance float64
 	}{
 		{[]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, []float64{9, 8, 7, 6, 5, 4, 3, 2, 1}, 0.6153846153846154},
 		{[]float64{1, 1, 1, 1, 1, 1, 1, 1, 1}, []float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, 0.8888888888888888},
@@ -115,8 +115,8 @@ func TestNormalizedIntersection(t *testing.T) {
 
 	// Test with all values in the table
 	for _, pair := range tTable {
-		confidence, err := NormalizedIntersection(pair.hist1, pair.hist2)
+		distance, err := NormalizedIntersection(pair.hist1, pair.hist2)
 		assert.Nil(t, err)
-		assert.Equal(t, pair.confidence, confidence)
+		assert.Equal(t, pair.distance, distance)
 	}
 }

@@ -228,27 +228,27 @@ func Predict(img image.Image) (string, float64, error) {
 	}
 
 	// Search for the closest histogram based on the histograms calculated in the training step.
-	minConfidence, err := histogram.Compare(hist, trainingData.Histograms[0], Metric)
+	minDistance, err := histogram.Compare(hist, trainingData.Histograms[0], Metric)
 	if err != nil {
 		return "", 0.0, err
 	}
 
 	minIndex := 0
 	for index := 1; index < len(trainingData.Histograms); index++ {
-		// Calculate the confidence from the current histogram.
-		confidence, err := histogram.Compare(hist, trainingData.Histograms[index], Metric)
+		// Calculate the distance from the current histogram.
+		distance, err := histogram.Compare(hist, trainingData.Histograms[index], Metric)
 		if err != nil {
 			return "", 0.0, err
 		}
 
-		// If it is closer, save the minConfidence and the index.
-		if confidence < minConfidence {
-			minConfidence = confidence
+		// If it is closer, save the minDistance and the index.
+		if distance < minDistance {
+			minDistance = distance
 			minIndex = index
 		}
 	}
 
 	// Return the label corresponding to the closest histogram,
-	// the confidence (minConfidence) and the error (nil).
-	return trainingData.Labels[minIndex], minConfidence, nil
+	// the distance (minDistance) and the error (nil).
+	return trainingData.Labels[minIndex], minDistance, nil
 }
