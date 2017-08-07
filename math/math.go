@@ -49,7 +49,7 @@ func ChiSquare(hist1, hist2 []float64) (float64, error) {
 
 	var sum float64
 	for index := 0; index < len(hist1); index++ {
-		numerator := math.Pow(hist1[index] - hist2[index], 2)
+		numerator := math.Pow(hist1[index]-hist2[index], 2)
 		denominator := hist1[index]
 		sum += numerator / denominator
 	}
@@ -69,7 +69,7 @@ func EuclideanDistance(hist1, hist2 []float64) (float64, error) {
 
 	var sum float64
 	for index := 0; index < len(hist1); index++ {
-		sum += math.Pow(hist1[index] - hist2[index], 2)
+		sum += math.Pow(hist1[index]-hist2[index], 2)
 	}
 	return math.Sqrt(sum), nil
 }

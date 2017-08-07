@@ -1,9 +1,9 @@
 package lbp
 
 import (
-	"testing"
 	"image"
 	"os"
+	"testing"
 
 	"github.com/stretchr/testify/assert"
 )

@@ -2,8 +2,8 @@ package lbph
 
 import (
 	"image"
-	"testing"
 	"os"
+	"testing"
 
 	"github.com/kelvins/lbph/metric"
 

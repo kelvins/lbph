@@ -29,8 +29,8 @@ func Calculate(pixels [][]uint8, gridX, gridY uint8) ([]float64, error) {
 	}
 
 	// Get the size (width and height) of each region
-	gridWidth := cols/int(gridX)
-	gridHeight := rows/int(gridY)
+	gridWidth := cols / int(gridX)
+	gridHeight := rows / int(gridY)
 
 	// Calculates the histogram of each grid
 	for gX := 0; gX < int(gridX); gX++ {
@@ -39,10 +39,10 @@ func Calculate(pixels [][]uint8, gridX, gridY uint8) ([]float64, error) {
 			regionHistogram := make([]float64, 256)
 
 			// Define the start and end positions for the following loop
-			startPosX := gX*gridWidth
-			startPosY := gY*gridHeight
-			endPosX := (gX+1)*gridWidth
-			endPosY := (gY+1)*gridHeight
+			startPosX := gX * gridWidth
+			startPosY := gY * gridHeight
+			endPosX := (gX + 1) * gridWidth
+			endPosY := (gY + 1) * gridHeight
 
 			// Make sure that no pixel has been leave at the end
 			if gX == int(gridX)-1 {
@@ -93,4 +93,3 @@ func Compare(hist1, hist2 []float64, selectedMetric string) (float64, error) {
 
 	return 0, errors.New("Invalid metric selected to compare the histograms")
 }
-

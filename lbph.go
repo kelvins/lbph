@@ -32,14 +32,14 @@ type Parameters struct {
 // trainData struct stores the TrainingData loaded by the user.
 // It needs to be a pointer because the first state will be nil.
 // This field should not be exported because it is "read only".
-var	trainingData = &TrainingData{}
+var trainingData = &TrainingData{}
 
 // lbphParameters struct stores the LBPH parameters.
 // It is not a pointer, so it will never be nil.
 // This field should not be exported because the user cannot change
 // the LBPH parameters after training the algorithm. To change the
 // parameters we need to call Init that will "reset" the training data.
-var	lbphParameters = Parameters{}
+var lbphParameters = Parameters{}
 
 // The metric used to compare the histograms in the Predict step.
 var Metric string

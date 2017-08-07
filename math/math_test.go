@@ -10,8 +10,8 @@ import (
 func TestChiSquare(t *testing.T) {
 	// Table tests
 	var tTable = []struct {
-		hist1      []float64
-		hist2      []float64
+		hist1    []float64
+		hist2    []float64
 		distance float64
 	}{
 		{[]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, []float64{9, 8, 7, 6, 5, 4, 3, 2, 1}, 102.8968253968254},
@@ -36,8 +36,8 @@ func TestChiSquare(t *testing.T) {
 func TestEuclideanDistance(t *testing.T) {
 	// Table tests
 	var tTable = []struct {
-		hist1      []float64
-		hist2      []float64
+		hist1    []float64
+		hist2    []float64
 		distance float64
 	}{
 		{[]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, []float64{9, 8, 7, 6, 5, 4, 3, 2, 1}, 15.491933384829668},
@@ -58,8 +58,8 @@ func TestEuclideanDistance(t *testing.T) {
 func TestNormalizedEuclideanDistance(t *testing.T) {
 	// Table tests
 	var tTable = []struct {
-		hist1      []float64
-		hist2      []float64
+		hist1    []float64
+		hist2    []float64
 		distance float64
 	}{
 		{[]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, []float64{9, 8, 7, 6, 5, 4, 3, 2, 1}, 5.163977794943222},
@@ -80,8 +80,8 @@ func TestNormalizedEuclideanDistance(t *testing.T) {
 func TestIntersection(t *testing.T) {
 	// Table tests
 	var tTable = []struct {
-		hist1      []float64
-		hist2      []float64
+		hist1    []float64
+		hist2    []float64
 		distance float64
 	}{
 		{[]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, []float64{9, 8, 7, 6, 5, 4, 3, 2, 1}, 40.0},
@@ -102,8 +102,8 @@ func TestIntersection(t *testing.T) {
 func TestNormalizedIntersection(t *testing.T) {
 	// Table tests
 	var tTable = []struct {
-		hist1      []float64
-		hist2      []float64
+		hist1    []float64
+		hist2    []float64
 		distance float64
 	}{
 		{[]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, []float64{9, 8, 7, 6, 5, 4, 3, 2, 1}, 0.6153846153846154},
