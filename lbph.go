@@ -60,8 +60,8 @@ func init() {
 	// As the trainData is a pointer, the initial state can be nil.
 	trainingData = nil
 
-	// Use the ChiSquare as the default metric.
-	Metric = metric.ChiSquare
+	// Use the EuclideanDistance as the default metric.
+	Metric = metric.EuclideanDistance
 }
 
 // Init function is used to set the LBPH parameters based on the Parameters structure.
