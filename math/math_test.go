@@ -84,11 +84,11 @@ func TestIntersection(t *testing.T) {
 		hist2      []float64
 		confidence float64
 	}{
-		{[]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, []float64{9, 8, 7, 6, 5, 4, 3, 2, 1}, 25},
-		{[]float64{1, 1, 1, 1, 1, 1, 1, 1, 1}, []float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, 9.0},
-		{[]float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, []float64{1, 1, 1, 1, 1, 1, 1, 1, 1}, 9.0},
-		{[]float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, []float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, 81.0},
-		{[]float64{1, 4, 5, 4, 1, 0, 0, 0, 0}, []float64{0, 0, 0, 0, 0, 1, 3, 4, 2}, 0.0},
+		{[]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, []float64{9, 8, 7, 6, 5, 4, 3, 2, 1}, 40.0},
+		{[]float64{1, 1, 1, 1, 1, 1, 1, 1, 1}, []float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, 72.0},
+		{[]float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, []float64{1, 1, 1, 1, 1, 1, 1, 1, 1}, 72.0},
+		{[]float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, []float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, 0.0},
+		{[]float64{1, 4, 5, 4, 1, 0, 0, 0, 0}, []float64{0, 0, 0, 0, 0, 1, 3, 4, 2}, 25.0},
 	}
 
 	// Test with all values in the table
@@ -106,38 +106,16 @@ func TestNormalizedIntersection(t *testing.T) {
 		hist2      []float64
 		confidence float64
 	}{
-		{[]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, []float64{9, 8, 7, 6, 5, 4, 3, 2, 1}, 0.5555555555555556},
-		{[]float64{1, 1, 1, 1, 1, 1, 1, 1, 1}, []float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, 0.1111111111111111},
-		{[]float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, []float64{1, 1, 1, 1, 1, 1, 1, 1, 1}, 0.1111111111111111},
-		{[]float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, []float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, 1.0},
-		{[]float64{1, 4, 5, 4, 1, 0, 0, 0, 0}, []float64{0, 0, 0, 0, 0, 1, 3, 4, 2}, 0.0},
+		{[]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, []float64{9, 8, 7, 6, 5, 4, 3, 2, 1}, 0.6153846153846154},
+		{[]float64{1, 1, 1, 1, 1, 1, 1, 1, 1}, []float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, 0.8888888888888888},
+		{[]float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, []float64{1, 1, 1, 1, 1, 1, 1, 1, 1}, 0.8888888888888888},
+		{[]float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, []float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, 0.0},
+		{[]float64{1, 4, 5, 4, 1, 0, 0, 0, 0}, []float64{0, 0, 0, 0, 0, 1, 3, 4, 2}, 1.0},
 	}
 
 	// Test with all values in the table
 	for _, pair := range tTable {
 		confidence, err := NormalizedIntersection(pair.hist1, pair.hist2)
-		assert.Nil(t, err)
-		assert.Equal(t, pair.confidence, confidence)
-	}
-}
-
-func TestAbsoluteValueNorm(t *testing.T) {
-	// Table tests
-	var tTable = []struct {
-		hist1      []float64
-		hist2      []float64
-		confidence float64
-	}{
-		{[]float64{1, 2, 3, 4, 5, 6, 7, 8, 9}, []float64{9, 8, 7, 6, 5, 4, 3, 2, 1}, 40.0},
-		{[]float64{1, 1, 1, 1, 1, 1, 1, 1, 1}, []float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, 72.0},
-		{[]float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, []float64{1, 1, 1, 1, 1, 1, 1, 1, 1}, 72.0},
-		{[]float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, []float64{9, 9, 9, 9, 9, 9, 9, 9, 9}, 0.0},
-		{[]float64{1, 4, 5, 4, 1, 0, 0, 0, 0}, []float64{0, 0, 0, 0, 0, 1, 3, 4, 2}, 25.0},
-	}
-
-	// Test with all values in the table
-	for _, pair := range tTable {
-		confidence, err := AbsoluteValueNorm(pair.hist1, pair.hist2)
 		assert.Nil(t, err)
 		assert.Equal(t, pair.confidence, confidence)
 	}

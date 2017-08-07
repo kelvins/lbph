@@ -228,7 +228,7 @@ func Predict(img image.Image) (string, float64, error) {
 	}
 
 	// Search for the closest histogram based on the histograms calculated in the training step.
-	minMaxConfidence, err := histogram.Compare(hist, trainingData.Histograms[0], Metric)
+	minConfidence, err := histogram.Compare(hist, trainingData.Histograms[0], Metric)
 	if err != nil {
 		return "", 0.0, err
 	}
@@ -241,21 +241,14 @@ func Predict(img image.Image) (string, float64, error) {
 			return "", 0.0, err
 		}
 
-		if Metric == metric.Intersection || Metric == metric.NormalizedIntersection {
-			if confidence > minMaxConfidence {
-				minMaxConfidence = confidence
-				minIndex = index
-			}
-		} else {
-			// If it is closer, save the minConfidence and the index.
-			if confidence < minMaxConfidence {
-				minMaxConfidence = confidence
-				minIndex = index
-			}
+		// If it is closer, save the minConfidence and the index.
+		if confidence < minConfidence {
+			minConfidence = confidence
+			minIndex = index
 		}
 	}
 
 	// Return the label corresponding to the closest histogram,
 	// the confidence (minConfidence) and the error (nil).
-	return trainingData.Labels[minIndex], minMaxConfidence, nil
+	return trainingData.Labels[minIndex], minConfidence, nil
 }

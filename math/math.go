@@ -5,22 +5,13 @@ import (
 	"math"
 )
 
-// min function returns the minimum value.
-func min(value1, value2 float64) float64 {
-	if value1 < value2 {
+// max function returns the maximum value.
+func max(value1, value2 float64) float64 {
+	if value1 > value2 {
 		return value1
 	} else {
 		return value2
 	}
-}
-
-// sum function returns the sum of a float64 slice.
-func sum(slice []float64) float64 {
-	var sum float64
-	for _, value := range slice {
-		sum += value
-	}
-	return sum
 }
 
 // abs function returns the absolute value.
@@ -32,6 +23,17 @@ func abs(a float64) float64 {
 	}
 }
 
+// checkHistograms check if the histograms are correct.
+func checkHistograms(hist1, hist2 []float64) error {
+	if len(hist1) == 0 || len(hist2) == 0 {
+		return errors.New("Could not compare the histograms. The histogram is empty.")
+	}
+	if len(hist1) != len(hist2) {
+		return errors.New("Could not compare the histograms. The slices have different sizes.")
+	}
+	return nil
+}
+
 // chiSquare calculates the distance between two histograms using
 // the chi square statistic.
 // x^2 = \sum_{i=1}^{n}\frac{(hist1_{i} - hist2_{i})^2}{hist1_{i}}
@@ -39,9 +41,10 @@ func abs(a float64) float64 {
 // http://file.scirp.org/Html/8-72278_30995.htm
 // https://www.google.com/patents/WO2007080817A1?cl=en
 func ChiSquare(hist1, hist2 []float64) (float64, error) {
+
 	// Check the histogram sizes
-	if len(hist1) != len(hist2) {
-		return 0, errors.New("Could not compare the histograms. The slices have different sizes.")
+	if err := checkHistograms(hist1, hist2); err != nil {
+		return 0.0, err
 	}
 
 	var sum float64
@@ -60,8 +63,8 @@ func ChiSquare(hist1, hist2 []float64) (float64, error) {
 func EuclideanDistance(hist1, hist2 []float64) (float64, error) {
 
 	// Check the histogram sizes
-	if len(hist1) != len(hist2) {
-		return 0, errors.New("Could not compare the histograms. The slices have different sizes.")
+	if err := checkHistograms(hist1, hist2); err != nil {
+		return 0.0, err
 	}
 
 	var sum float64
@@ -78,8 +81,8 @@ func EuclideanDistance(hist1, hist2 []float64) (float64, error) {
 func NormalizedEuclideanDistance(hist1, hist2 []float64) (float64, error) {
 
 	// Check the histogram sizes
-	if len(hist1) != len(hist2) {
-		return 0, errors.New("Could not compare the histograms. The slices have different sizes.")
+	if err := checkHistograms(hist1, hist2); err != nil {
+		return 0.0, err
 	}
 
 	var sum float64
@@ -90,58 +93,19 @@ func NormalizedEuclideanDistance(hist1, hist2 []float64) (float64, error) {
 	return math.Sqrt(sum), nil
 }
 
-// Intersection calculates the intersection between two histograms
-// by the following formula:
+// Intersection calculates the intersection between two histograms.
 // D = \sum_{i=1}^{n} min(hist1_{i}, hist2_{i})
-// IMPORTANT: This is inversely proportional, higher the intersection higher the similarity.
+// As the intersection is inverted, it becomes the AbsoluteValueNorm:
+// D = \sum_{i=1}^{n} \left | hist1_{i} - hist2_{i} \right |
 // References:
 // http://blog.datadive.net/histogram-intersection-for-change-detection/
 // https://dsp.stackexchange.com/questions/18065/histogram-intersection-with-two-different-bin-sizes
 // https://mpatacchiola.github.io/blog/2016/11/12/the-simplest-classifier-histogram-intersection.html
 func Intersection(hist1, hist2 []float64) (float64, error) {
+
 	// Check the histogram sizes
-	if len(hist1) != len(hist2) {
-		return 0, errors.New("Could not compare the histograms. The slices have different sizes.")
-	}
-
-	var sum float64
-	for index := 0; index < len(hist1); index++ {
-		sum += min(hist1[index], hist2[index])
-	}
-	return sum, nil
-}
-
-// normalizedIntersection calculates the intersection between two histograms
-// and normalizes the result by dividing it by the sum of the hist2
-// D = \frac{\sum_{i=1}^{n} min(hist1_{i}, hist2_{i})}{max(\sum_{i=1}^{n}hist1_{i},\sum_{i=1}^{n}hist2_{i})}
-// References:
-// https://dsp.stackexchange.com/questions/18065/histogram-intersection-with-two-different-bin-sizes
-// https://mpatacchiola.github.io/blog/2016/11/12/the-simplest-classifier-histogram-intersection.html
-func NormalizedIntersection(hist1, hist2 []float64) (float64, error) {
-	// Check the histogram sizes
-	if len(hist1) != len(hist2) {
-		return 0, errors.New("Could not compare the histograms. The slices have different sizes.")
-	}
-
-	intersection, _ := Intersection(hist1, hist2)
-
-	sum1 := sum(hist1)
-	sum2 := sum(hist2)
-
-	if sum1 > sum2 {
-		return intersection / sum1, nil
-	} else {
-		return intersection / sum2, nil
-	}
-}
-
-// AbsoluteValueNorm calculates the absolute value normalized
-// by the following formula:
-// D = \sum_{i=1}^{n} \left | hist1_{i} - hist2_{i} \right |
-func AbsoluteValueNorm(hist1, hist2 []float64) (float64, error) {
-	// Check the histogram sizes
-	if len(hist1) != len(hist2) {
-		return 0, errors.New("Could not compare the histograms. The slices have different sizes.")
+	if err := checkHistograms(hist1, hist2); err != nil {
+		return 0.0, err
 	}
 
 	var sum float64
@@ -149,4 +113,26 @@ func AbsoluteValueNorm(hist1, hist2 []float64) (float64, error) {
 		sum += abs(hist1[index] - hist2[index])
 	}
 	return sum, nil
+}
+
+// NormalizedIntersection calculates the intersection between two histograms
+// and normalizes the result by dividing it by the sum of the hist2
+// D = \frac{\sum_{i=1}^{n} min(hist1_{i}, hist2_{i})}{max(\sum_{i=1}^{n}hist1_{i},\sum_{i=1}^{n}hist2_{i})}
+// References:
+// https://dsp.stackexchange.com/questions/18065/histogram-intersection-with-two-different-bin-sizes
+// https://mpatacchiola.github.io/blog/2016/11/12/the-simplest-classifier-histogram-intersection.html
+func NormalizedIntersection(hist1, hist2 []float64) (float64, error) {
+
+	// Check the histogram sizes
+	if err := checkHistograms(hist1, hist2); err != nil {
+		return 0.0, err
+	}
+
+	intersection, _ := Intersection(hist1, hist2)
+	var maxSum float64
+	for index := 0; index < len(hist1); index++ {
+		maxSum += max(hist1[index], hist2[index])
+	}
+
+	return intersection / maxSum, nil
 }
