@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/pkg/errors"
 )
 
 // LoadImage function is used to provide an easy way to load an image file.
@@ -15,7 +14,7 @@ func LoadImage(filePath string) (image.Image, error) {
 	fImage, err := os.Open(filePath)
 	// Check if no error has occurred
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed to open an image file")
+		return nil, err
 	}
 
 	// Ensure that the image file will be closed
@@ -25,7 +24,7 @@ func LoadImage(filePath string) (image.Image, error) {
 	img, _, err := image.Decode(fImage)
 	// Check if no error has occurred
 	if err != nil {
-		return nil, errors.Wrap(err, "Failed decoding the image file")
+		return nil, err
 	}
 
 	return img, nil
