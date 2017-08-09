@@ -108,7 +108,7 @@ Using the label you can check if the algorithm has correctly predicted the image
 Use the following `go get` command:
 
 ```
-$ go get -t github.com/kelvins/lbph
+$ go get github.com/kelvins/lbph
 ```
 
 It will get the package and its dependencies, including the test dependencies.
@@ -122,8 +122,8 @@ Usage example:
 package main
 
 import (
-	"image"
 	"fmt"
+	"image"
 	"os"
 
 	"github.com/kelvins/lbph"
@@ -132,6 +132,7 @@ import (
 
 func main() {
 
+	// Prepare the training data
 	var paths []string
 	paths = append(paths, "./dataset/train/1.png")
 	paths = append(paths, "./dataset/train/2.png")
@@ -145,11 +146,14 @@ func main() {
 	var images []image.Image
 
 	for index := 0; index < len(paths); index++ {
-		img, err := LoadImage(paths[index])
+		img, err := loadImage(paths[index])
 		checkError(err)
 		images = append(images, img)
 	}
 
+	// Define the LBPH parameters
+	// This is optional, if you not set the parameters using
+	// the Init function, the LBPH will use the default ones
 	parameters := lbph.Parameters{
 		Radius:    1,
 		Neighbors: 8,
@@ -157,11 +161,14 @@ func main() {
 		GridY:     8,
 	}
 
+	// Set the parameters
 	lbph.Init(parameters)
 
+	// Train the algorithm
 	err := lbph.Train(images, labels)
 	checkError(err)
 
+	// Prepare the testing data
 	paths = nil
 	paths = append(paths, "./dataset/test/1.png")
 	paths = append(paths, "./dataset/test/2.png")
@@ -172,13 +179,21 @@ func main() {
 	expectedLabels = append(expectedLabels, "rocks")
 	expectedLabels = append(expectedLabels, "grass")
 
+	// Select the metric used to compare the histograms
+	// This is optional, the default is EuclideanDistance
 	lbph.Metric = metric.EuclideanDistance
 
+	// For each data in the training dataset
 	for index := 0; index < len(paths); index++ {
-		img, err := LoadImage(paths[index])
+		// Load the image
+		img, err := loadImage(paths[index])
 		checkError(err)
+
+		// Call the Predict function
 		label, distance, err := lbph.Predict(img)
 		checkError(err)
+
+		// Check the results
 		if label == expectedLabels[index] {
 			fmt.Println("Image correctly predicted")
 		} else {
@@ -189,7 +204,8 @@ func main() {
 	}
 }
 
-func LoadImage(filePath string) (image.Image, error) {
+// loadImage function is used to load an image based on a file path
+func loadImage(filePath string) (image.Image, error) {
 	fImage, err := os.Open(filePath)
 	checkError(err)
 
@@ -201,6 +217,7 @@ func LoadImage(filePath string) (image.Image, error) {
 	return img, nil
 }
 
+// checkError functions is used to check for errors
 func checkError(err error) {
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error: %v\n", err)
