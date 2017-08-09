@@ -32,7 +32,7 @@ As LBP is a visual descriptor it can also be used for face recognition tasks, as
 In this section, it is shown a step-by-step explanation of the LBPH algorithm:
 
 1. First of all, we need to define the parameters (`radius`, `neighbors`, `grid x` and `grid y`) using the `Parameters` structure from the `lbph` package. Then we need to call the `Init` function passing the structure with the parameters. If we not set the parameters, it will use the default parameters as explained in the [Parameters](#parameters) section.
-2. Secondly, we need to train the algorithm. To do that we just need to call the `Train` function passing a slice of images and a slice of labels. All images must have the same size. The labels are used as IDs for the subjects of the images, so if you have more than one image of the same subject, the labels should be the same.
+2. Secondly, we need to train the algorithm. To do that we just need to call the `Train` function passing a slice of images and a slice of labels by parameter. All images must have the same size. The labels are used as IDs for the images, so if you have more than one image of the same texture/subject, the labels should be the same.
 3. The `Train` function will first check if all images have the same size. If at least one image has not the same size, the `Train` function will return an error and the algorithm will not be trained.
 4. Then, the `Train` function will apply the basic LBP operation by changing each pixel based on its neighbors using a default radius defined by the user. The basic LBP operation can be seen in the following image (using `8` neighbors and radius equal to `1`):
 
@@ -44,8 +44,7 @@ In this section, it is shown a step-by-step explanation of the LBPH algorithm:
 
 6. The images, labels, and histograms are stored in a data structure so we can compare all of it to a new image in the `Predict` function.
 7. Now, the algorithm is already trained and we can Predict a new image.
-8. To predict a new image we just need to call the `Predict` function passing the image as parameter. The `Predict` function will extract the histogram from the new image and will return the label and distance corresponding to the closest histogram if no error has occurred.
-9. It uses the [euclidean distance](#important-notes) to calculate the similarity of the histograms. The closer to zero is the distance, the greater is the confidence.
+8. To predict a new image we just need to call the `Predict` function passing the image as parameter. The `Predict` function will extract the histogram from the new image, compare it to the histograms stored in the data structure and return the label and distance corresponding to the closest histogram if no error has occurred. **Note**: It uses the [euclidean distance](#comparing-histograms) metric as the default metric to compare the histograms. The closer to zero is the distance, the greater is the confidence.
 
 ## Comparing Histograms
 
@@ -67,19 +66,17 @@ The LBPH package provides the following metrics to compare the histograms:
 
 ![Intersection](http://i.imgur.com/EwAtqgX.gif)
 
+![Absolute Value Norm](http://i.imgur.com/27jXZ4V.gif)
+
 **Normalized Intersection :**
 
 ![Normalized Intersection](http://i.imgur.com/yTowqFm.gif)
-
-**Absolute Value Norm**
-
-![Absolute Value Norm](http://i.imgur.com/27jXZ4V.gif)
 
 The comparison metric can be chosen as explained in the [metrics](#metrics) section.
 
 ## Important Notes
 
-- The current LBPH implementation uses a fixed `radius` of `1` and a fixed number of `neighbors` equal to `8`. We need to implement the usage of these parameters (feel free to contribute here).
+The current LBPH implementation uses a fixed `radius` of `1` and a fixed number of `neighbors` equal to `8`. We need to implement the usage of these parameters (feel free to contribute here).
 
 # I/O
 
@@ -99,16 +96,18 @@ The Predict function returns 3 values:
 * **distance**: The distance between the histograms from the input test image and the matched image (from the training set).
 * **err**: Some error that has occurred in the Predict step. If no error occurs it will returns nil.
 
-Using the label you can check if the algorithm has correctly predicted the image. In a real world application, it is not feasible to manually verify all images, so we can use the distance to infer if the algorithm has predicted correctly or not.
+Using the label you can check if the algorithm has correctly predicted the image. In a real world application, it is not feasible to manually verify all images, so we should use the distance to infer if the algorithm has predicted correctly or not.
 
 # Usage
+
+In this section, we explain how the algorithm should be used.
 
 ## Installation
 
 Use the following `go get` command:
 
 ```
-$ go get github.com/kelvins/lbph
+$ go get -t github.com/kelvins/lbph
 ```
 
 It will get the package and its dependencies, including the test dependencies.
@@ -247,6 +246,8 @@ You can choose the following metrics from the `metric` package to compare the hi
 * metric.NormalizedEuclideanDistance
 * metric.Intersection
 * metric.NormalizedIntersection
+
+The metric can be defined just before we call the `Predict` function.
 
 # References
 
