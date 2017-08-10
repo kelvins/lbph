@@ -62,15 +62,9 @@ The LBPH package provides the following metrics to compare the histograms:
 
 ![Normalized Euclidean Distance](http://i.imgur.com/6Wj2keg.gif)
 
-**Intersection :**
+**AbsoluteValue :**
 
-![Intersection](http://i.imgur.com/EwAtqgX.gif)
-
-![Absolute Value Norm](http://i.imgur.com/27jXZ4V.gif)
-
-**Normalized Intersection :**
-
-![Normalized Intersection](http://i.imgur.com/yTowqFm.gif)
+![Absolute Value](http://i.imgur.com/27jXZ4V.gif)
 
 The comparison metric can be chosen as explained in the [metrics](#metrics) section.
 
@@ -244,8 +238,7 @@ You can choose the following metrics from the `metric` package to compare the hi
 * metric.ChiSquare
 * metric.EuclideanDistance
 * metric.NormalizedEuclideanDistance
-* metric.Intersection
-* metric.NormalizedIntersection
+* metric.AbsoluteValue
 
 The metric can be defined just before we call the `Predict` function.
 

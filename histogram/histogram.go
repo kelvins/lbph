@@ -85,10 +85,8 @@ func Compare(hist1, hist2 []float64, selectedMetric string) (float64, error) {
 		return math.EuclideanDistance(hist1, hist2)
 	case metric.NormalizedEuclideanDistance:
 		return math.NormalizedEuclideanDistance(hist1, hist2)
-	case metric.Intersection:
-		return math.Intersection(hist1, hist2)
-	case metric.NormalizedIntersection:
-		return math.NormalizedIntersection(hist1, hist2)
+	case metric.AbsoluteValue:
+		return math.AbsoluteValue(hist1, hist2)
 	}
 
 	return 0, errors.New("Invalid metric selected to compare the histograms")

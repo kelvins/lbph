@@ -93,15 +93,9 @@ func NormalizedEuclideanDistance(hist1, hist2 []float64) (float64, error) {
 	return math.Sqrt(sum), nil
 }
 
-// Intersection calculates the intersection between two histograms.
-// D = \sum_{i=1}^{n} min(hist1_{i}, hist2_{i})
-// As the intersection is inverted, it becomes the AbsoluteValueNorm:
+// AbsoluteValue calculates the absolute values between two histograms.
 // D = \sum_{i=1}^{n} \left | hist1_{i} - hist2_{i} \right |
-// References:
-// http://blog.datadive.net/histogram-intersection-for-change-detection/
-// https://dsp.stackexchange.com/questions/18065/histogram-intersection-with-two-different-bin-sizes
-// https://mpatacchiola.github.io/blog/2016/11/12/the-simplest-classifier-histogram-intersection.html
-func Intersection(hist1, hist2 []float64) (float64, error) {
+func AbsoluteValue(hist1, hist2 []float64) (float64, error) {
 
 	// Check the histogram sizes
 	if err := checkHistograms(hist1, hist2); err != nil {
@@ -113,26 +107,4 @@ func Intersection(hist1, hist2 []float64) (float64, error) {
 		sum += abs(hist1[index] - hist2[index])
 	}
 	return sum, nil
-}
-
-// NormalizedIntersection calculates the intersection between two histograms
-// and normalizes the result by dividing it by the sum of the hist2
-// D = \frac{\sum_{i=1}^{n} min(hist1_{i}, hist2_{i})}{max(\sum_{i=1}^{n}hist1_{i},\sum_{i=1}^{n}hist2_{i})}
-// References:
-// https://dsp.stackexchange.com/questions/18065/histogram-intersection-with-two-different-bin-sizes
-// https://mpatacchiola.github.io/blog/2016/11/12/the-simplest-classifier-histogram-intersection.html
-func NormalizedIntersection(hist1, hist2 []float64) (float64, error) {
-
-	// Check the histogram sizes
-	if err := checkHistograms(hist1, hist2); err != nil {
-		return 0.0, err
-	}
-
-	intersection, _ := Intersection(hist1, hist2)
-	var maxSum float64
-	for index := 0; index < len(hist1); index++ {
-		maxSum += max(hist1[index], hist2[index])
-	}
-
-	return intersection / maxSum, nil
 }
