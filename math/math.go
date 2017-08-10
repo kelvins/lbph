@@ -5,24 +5,6 @@ import (
 	"math"
 )
 
-// max function returns the maximum value.
-func max(value1, value2 float64) float64 {
-	if value1 > value2 {
-		return value1
-	} else {
-		return value2
-	}
-}
-
-// abs function returns the absolute value.
-func abs(a float64) float64 {
-	if a < 0 {
-		return a * -1.0
-	} else {
-		return a
-	}
-}
-
 // checkHistograms check if the histograms are correct.
 func checkHistograms(hist1, hist2 []float64) error {
 	if len(hist1) == 0 || len(hist2) == 0 {
@@ -104,7 +86,7 @@ func AbsoluteValue(hist1, hist2 []float64) (float64, error) {
 
 	var sum float64
 	for index := 0; index < len(hist1); index++ {
-		sum += abs(hist1[index] - hist2[index])
+		sum += math.Abs(hist1[index] - hist2[index])
 	}
 	return sum, nil
 }
