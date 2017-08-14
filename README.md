@@ -62,7 +62,7 @@ The LBPH package provides the following metrics to compare the histograms:
 
 ![Normalized Euclidean Distance](http://i.imgur.com/6Wj2keg.gif)
 
-**AbsoluteValue :**
+**Absolute Value :**
 
 ![Absolute Value](http://i.imgur.com/27jXZ4V.gif)
 
@@ -73,6 +73,8 @@ The comparison metric can be chosen as explained in the [metrics](#metrics) sect
 The current LBPH implementation uses a fixed `radius` of `1` and a fixed number of `neighbors` equal to `8`. We need to implement the usage of these parameters (feel free to contribute here).
 
 # I/O
+
+In this section, you will find a brief explanation about the input and output data of the algorithm.
 
 ## Input
 
