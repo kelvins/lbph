@@ -50,19 +50,19 @@ In this section, it is shown a step-by-step explanation of the LBPH algorithm:
 
 The LBPH package provides the following metrics to compare the histograms:
 
-**Chi-Square :**
+**Chi-Square** :
 
 ![Chi-Square](http://i.imgur.com/6CyngL9.gif)
 
-**Euclidean Distance :**
+**Euclidean Distance** :
 
 ![Euclidean Distance](http://i.imgur.com/6ll6hDU.gif)
 
-**Normalized Euclidean Distance :**
+**Normalized Euclidean Distance** :
 
 ![Normalized Euclidean Distance](http://i.imgur.com/6Wj2keg.gif)
 
-**Absolute Value :**
+**Absolute Value** :
 
 ![Absolute Value](http://i.imgur.com/27jXZ4V.gif)
 
