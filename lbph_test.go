@@ -34,14 +34,14 @@ func LoadImage(filePath string) (image.Image, error) {
 
 func TestPredict(t *testing.T) {
 
-	parameters := Parameters{
+	params := Params{
 		Radius:    1,
 		Neighbors: 8,
 		GridX:     8,
 		GridY:     8,
 	}
 
-	Init(parameters)
+	Init(params)
 
 	var paths []string
 	paths = append(paths, "./dataset/train/1.png")

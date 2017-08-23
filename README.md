@@ -149,7 +149,7 @@ func main() {
 	// Define the LBPH parameters
 	// This is optional, if you not set the parameters using
 	// the Init function, the LBPH will use the default ones
-	parameters := lbph.Parameters{
+	params := lbph.Params{
 		Radius:    1,
 		Neighbors: 8,
 		GridX:     8,
@@ -157,7 +157,7 @@ func main() {
 	}
 
 	// Set the parameters
-	lbph.Init(parameters)
+	lbph.Init(params)
 
 	// Train the algorithm
 	err := lbph.Train(images, labels)

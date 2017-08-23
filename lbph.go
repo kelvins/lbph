@@ -21,8 +21,8 @@ type TrainingData struct {
 	Histograms [][]float64
 }
 
-// Parameters struct is used to pass the LBPH parameters.
-type Parameters struct {
+// Params struct is used to pass the LBPH parameters.
+type Params struct {
 	Radius    uint8
 	Neighbors uint8
 	GridX     uint8
@@ -34,12 +34,12 @@ type Parameters struct {
 // This field should not be exported because it is "read only".
 var trainingData = &TrainingData{}
 
-// lbphParameters struct stores the LBPH parameters.
+// lbphParams struct stores the LBPH parameters.
 // It is not a pointer, so it will never be nil.
 // This field should not be exported because the user cannot change
 // the LBPH parameters after training the algorithm. To change the
 // parameters we need to call Init that will "reset" the training data.
-var lbphParameters = Parameters{}
+var lbphParams = Params{}
 
 // The metric used to compare the histograms in the Predict step.
 var Metric string
@@ -50,7 +50,7 @@ var Metric string
 // metric (in this case ChiSquare).
 func init() {
 	// Define the default LBPH parameters.
-	lbphParameters = Parameters{
+	lbphParams = Params{
 		Radius:    1,
 		Neighbors: 8,
 		GridX:     8,
@@ -64,31 +64,31 @@ func init() {
 	Metric = metric.EuclideanDistance
 }
 
-// Init function is used to set the LBPH parameters based on the Parameters structure.
+// Init function is used to set the LBPH parameters based on the Params structure.
 // It is needed to set the default parameters if something is wrong and
 // to reset the trainingData when new parameters are defined.
-func Init(parameters Parameters) {
+func Init(params Params) {
 
 	// If some parameter is wrong (== 0) set the default one.
 	// As the data type is uint8 we don't need to check if it is lower than 0.
-	if parameters.Radius == 0 {
-		parameters.Radius = 1
+	if params.Radius == 0 {
+		params.Radius = 1
 	}
 
-	if parameters.Neighbors == 0 {
-		parameters.Neighbors = 8
+	if params.Neighbors == 0 {
+		params.Neighbors = 8
 	}
 
-	if parameters.GridX == 0 {
-		parameters.GridX = 8
+	if params.GridX == 0 {
+		params.GridX = 8
 	}
 
-	if parameters.GridY == 0 {
-		parameters.GridY = 8
+	if params.GridY == 0 {
+		params.GridY = 8
 	}
 
-	// Set the LBPH parameters
-	lbphParameters = parameters
+	// Set the LBPH Params
+	lbphParams = params
 
 	// Every time the Init function is called the training data will be
 	// reset, so the user needs to train the algorithm again.
@@ -170,13 +170,13 @@ func Train(images []image.Image, labels []string) error {
 	var histograms [][]float64
 	for index := 0; index < len(images); index++ {
 		// Calculate the LBP operation for the current image.
-		pixels, err := lbp.Calculate(images[index], lbphParameters.Radius, lbphParameters.Neighbors)
+		pixels, err := lbp.Calculate(images[index], lbphParams.Radius, lbphParams.Neighbors)
 		if err != nil {
 			return err
 		}
 
 		// Get the histogram from the current image.
-		hist, err := histogram.Calculate(pixels, lbphParameters.GridX, lbphParameters.GridY)
+		hist, err := histogram.Calculate(pixels, lbphParams.GridX, lbphParams.GridY)
 		if err != nil {
 			return err
 		}
@@ -216,13 +216,13 @@ func Predict(img image.Image) (string, float64, error) {
 	}
 
 	// Calculate the LBP operation.
-	pixels, err := lbp.Calculate(img, lbphParameters.Radius, lbphParameters.Neighbors)
+	pixels, err := lbp.Calculate(img, lbphParams.Radius, lbphParams.Neighbors)
 	if err != nil {
 		return "", 0.0, err
 	}
 
 	// Calculate the histogram for the image.
-	hist, err := histogram.Calculate(pixels, lbphParameters.GridX, lbphParameters.GridY)
+	hist, err := histogram.Calculate(pixels, lbphParams.GridX, lbphParams.GridY)
 	if err != nil {
 		return "", 0.0, err
 	}
