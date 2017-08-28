@@ -3,6 +3,7 @@ package lbp
 import (
 	"image"
 	"os"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -33,8 +34,8 @@ func LoadImage(filePath string) (image.Image, error) {
 func TestGetBinary(t *testing.T) {
 	// Table tests
 	var tTable = []struct {
-		value     uint8
-		threshold uint8
+		value     int
+		threshold int
 		result    string
 	}{
 		{120, 120, "1"},
@@ -54,11 +55,11 @@ func TestCalculate(t *testing.T) {
 	assert.Nil(t, err)
 
 	// Results manually calculated (radius:1 - neighbors:8)
-	var expectedLBP [][]uint8
-	expectedLBP = append(expectedLBP, []uint8{91, 190, 93, 179})
-	expectedLBP = append(expectedLBP, []uint8{238, 245, 255, 206})
-	expectedLBP = append(expectedLBP, []uint8{115, 255, 175, 119})
-	expectedLBP = append(expectedLBP, []uint8{205, 186, 125, 218})
+	var expectedLBP [][]uint64
+	expectedLBP = append(expectedLBP, []uint64{91, 190, 93, 179})
+	expectedLBP = append(expectedLBP, []uint64{238, 245, 255, 206})
+	expectedLBP = append(expectedLBP, []uint64{115, 255, 175, 119})
+	expectedLBP = append(expectedLBP, []uint64{205, 186, 125, 218})
 
 	pixels, err := Calculate(img, 1, 8)
 	assert.Nil(t, err)
@@ -66,6 +67,7 @@ func TestCalculate(t *testing.T) {
 	// Check each pixel
 	for x := 0; x < len(pixels); x++ {
 		for y := 0; y < len(pixels[x]); y++ {
+			fmt.Println(pixels[x][y])
 			assert.Equal(t, pixels[x][y], expectedLBP[x][y], "The pixel value should be equal")
 		}
 	}

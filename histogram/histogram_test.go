@@ -9,13 +9,13 @@ import (
 )
 
 func TestCalculate(t *testing.T) {
-	var pixels [][]uint8
+	var pixels [][]uint64
 
 	_, err := Calculate(pixels, 1, 1)
 	assert.NotNil(t, err)
 
-	row1 := []uint8{255, 255, 255, 255, 255, 255}
-	row2 := []uint8{0, 0, 0, 0, 0, 0}
+	row1 := []uint64{255, 255, 255, 255, 255, 255}
+	row2 := []uint64{0, 0, 0, 0, 0, 0}
 	pixels = append(pixels, row1)
 	pixels = append(pixels, row2)
 	pixels = append(pixels, row2)

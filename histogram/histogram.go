@@ -8,7 +8,7 @@ import (
 )
 
 // Calculate function generates a histogram based on the 'matrix' passed by parameter.
-func Calculate(pixels [][]uint8, gridX, gridY uint8) ([]float64, error) {
+func Calculate(pixels [][]uint64, gridX, gridY uint8) ([]float64, error) {
 	var hist []float64
 
 	// Check the pixels 'matrix'

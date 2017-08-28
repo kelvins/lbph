@@ -11,7 +11,7 @@ import (
 
 // getBinaryString function used to get a binary value as a string based on a threshold.
 // Return "1" if the value is equal or higher than the threshold or "0" otherwise.
-func getBinaryString(value, threshold uint8) string {
+func getBinaryString(value, threshold int) string {
 	if value >= threshold {
 		return "1"
 	} else {
@@ -67,9 +67,9 @@ func GetPixels(img image.Image) [][]uint8 {
 
 // Calculate function calculates the LBP based on the radius and neighbors passed by parameter.
 // The radius and neighbors parameters are not in use.
-func Calculate(img image.Image, radius, neighbors uint8) ([][]uint8, error) {
+func Calculate(img image.Image, radius, neighbors uint8) ([][]uint64, error) {
 
-	var lbpPixels [][]uint8
+	var lbpPixels [][]uint64
 	// Check the parameters
 	if img == nil {
 		return lbpPixels, errors.New("The image passed to the ApplyLBP function is nil")
@@ -89,11 +89,11 @@ func Calculate(img image.Image, radius, neighbors uint8) ([][]uint8, error) {
 
 	// For each pixel in the image
 	for x := 1; x < width-1; x++ {
-		var currentRow []uint8
+		var currentRow []uint64
 		for y := 1; y < height-1; y++ {
 
 			// Get the current pixel as the threshold
-			threshold := pixels[x][y]
+			threshold := int(pixels[x][y])
 
 			binaryResult := ""
 			// Window based on the radius (3x3)
@@ -101,19 +101,19 @@ func Calculate(img image.Image, radius, neighbors uint8) ([][]uint8, error) {
 				for tempY := y - 1; tempY <= y+1; tempY++ {
 					// Get the binary for all pixels around the threshold
 					if tempX != x || tempY != y {
-						binaryResult += getBinaryString(pixels[tempX][tempY], threshold)
+						binaryResult += getBinaryString(int(pixels[tempX][tempY]), threshold)
 					}
 				}
 			}
 
 			// Convert the binary string to a decimal integer
-			dec, err := strconv.ParseUint(binaryResult, 2, 8)
+			dec, err := strconv.ParseUint(binaryResult, 2, 64)
 			if err != nil {
 				return lbpPixels, errors.New("Error converting binary to uint in the ApplyLBP function")
 			} else {
 				// Append the decimal do the result slice
 				// ParseUint returns a uint64 so we need to convert it to uint8
-				currentRow = append(currentRow, uint8(dec))
+				currentRow = append(currentRow, uint64(dec))
 			}
 		}
 		// Append the slice to the 'matrix'
