@@ -267,3 +267,5 @@ Feel free to contribute by commenting, suggesting, creating [issues](https://git
 5. Commit your changes (`git commit -am 'Some cool feature'`)
 6. Push to the branch (`git push origin master`)
 7. Create a new Pull Request
+
+If you want to know more about this project or have some doubt about it, feel free to contact me by email (kelvinpfw@gmail.com).
