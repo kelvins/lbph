@@ -254,6 +254,8 @@ The metric can be defined just before we call the `Predict` function.
 
 * OpenCV Histogram Comparison. http://docs.opencv.org/2.4/doc/tutorials/imgproc/histograms/histogram_comparison/histogram_comparison.html
 
+* Local Binary Patterns by Philipp Wagner. Link: http://bytefish.de/blog/local_binary_patterns/
+
 # How to contribute
 
 Feel free to contribute by commenting, suggesting, creating [issues](https://github.com/kelvins/lbph/issues) or sending pull requests. Any help is welcome.
