@@ -1,6 +1,7 @@
 # Local Binary Patterns Histograms (LBPH)
 
 [![GoDoc](https://godoc.org/github.com/kelvins/lbph?status.svg)](https://godoc.org/github.com/kelvins/lbph)
+[![Go Report Card](https://goreportcard.com/badge/github.com/kelvins/lbph)](https://goreportcard.com/report/github.com/kelvins/lbph)
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](LICENSE)
 
 # Summary
@@ -242,7 +243,7 @@ You can choose the following metrics from the `metric` package to compare the hi
 * metric.NormalizedEuclideanDistance
 * metric.AbsoluteValue
 
-The metric should be defined before we calling the `Predict` function.
+The metric should be defined before calling the `Predict` function.
 
 # References
 
