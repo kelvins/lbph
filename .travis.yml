@@ -1,5 +1,4 @@
 language: go
-sudo: false
 
 go:
   - 1.8.x
@@ -7,8 +6,11 @@ go:
 
 before_install:
   - go get -t ./...
+  - go get code.google.com/p/go.tools/cmd/cover
+  - go get github.com/modocache/gover
   - go get github.com/mattn/goveralls
 
 script:
-  - PATH="$HOME/gopath/bin:$PATH"
-  - script/coverage.sh --coveralls
+  - go test ./...
+  - gover
+  - goveralls -coverprofile=gover.coverprofile -service=travis-ci
