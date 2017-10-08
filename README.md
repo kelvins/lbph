@@ -38,7 +38,7 @@ In this section, it is shown a step-by-step explanation of the LBPH algorithm:
 
 ![LBP operation](http://i.imgur.com/G4PqJPe.png)
 
-5. After applying the LBP operation we extract the histograms of each image based on the number of grids (X and Y) passed by parameter. After extracting the histogram of each region, we concatenate all histograms and create a new one that will be used to represent the image.
+5. After applying the LBP operation we extract the histograms of each image based on the number of grids (X and Y) passed by parameter. After extracting the histogram of each region, we concatenate all histograms and create a new one which will be used to represent the image.
 
 ![Histograms](http://i.imgur.com/3BGk130.png)
 
@@ -70,7 +70,7 @@ The comparison metric can be chosen as explained in the [metrics](#metrics) sect
 
 ## Important Notes
 
-The current LBPH implementation uses a fixed `radius` of `1` and a fixed number of `neighbors` equal to `8`. We need to implement the usage of these parameters (feel free to contribute here).
+The current LBPH implementation uses a fixed `radius` of `1` and a fixed number of `neighbors` equal to `8`. We still need to implement the usage of these parameters in the LBP package (feel free to contribute here). Related to the [issue 1](https://github.com/kelvins/lbph/issues/1).
 
 # I/O
 
@@ -86,13 +86,13 @@ Y = (0.299 * RED) + (0.587 * GREEN) + (0.114 * BLUE)
 
 ## Output
 
-The Predict function returns 3 values:
+The `Predict` function returns 3 values:
 
 * **label**: The label corresponding to the predicted image.
 * **distance**: The distance between the histograms from the input test image and the matched image (from the training set).
-* **err**: Some error that has occurred in the Predict step. If no error occurs it will returns nil.
+* **err**: Some error that has occurred in the Predict step. If no error occurs it will return nil.
 
-Using the label you can check if the algorithm has correctly predicted the image. In a real world application, it is not feasible to manually verify all images, so we should use the distance to infer if the algorithm has predicted correctly or not.
+Using the label you can check if the algorithm has correctly predicted the image. In a real world application, it is not feasible to manually verify all images, so we can use the distance to infer if the algorithm has predicted the image correctly.
 
 # Usage
 
@@ -242,7 +242,7 @@ You can choose the following metrics from the `metric` package to compare the hi
 * metric.NormalizedEuclideanDistance
 * metric.AbsoluteValue
 
-The metric can be defined just before we call the `Predict` function.
+The metric should be defined before we calling the `Predict` function.
 
 # References
 
