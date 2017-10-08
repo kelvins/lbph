@@ -13,6 +13,3 @@ before_install:
 script:
   - PATH="$HOME/gopath/bin:$PATH"
   - script/coverage.sh --coveralls
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
