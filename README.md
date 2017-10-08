@@ -1,5 +1,6 @@
 # Local Binary Patterns Histograms (LBPH)
 
+[![Coverage Status](https://coveralls.io/repos/github/kelvins/lbph/badge.svg?branch=master)](https://coveralls.io/github/kelvins/lbph?branch=master)
 [![GoDoc](https://godoc.org/github.com/kelvins/lbph?status.svg)](https://godoc.org/github.com/kelvins/lbph)
 [![Go Report Card](https://goreportcard.com/badge/github.com/kelvins/lbph)](https://goreportcard.com/report/github.com/kelvins/lbph)
 [![License: MIT](https://img.shields.io/badge/License-MIT-brightgreen.svg)](LICENSE)
